@@ -1,0 +1,10 @@
+name: resources
+require: [yui.oop]
+namespace:
+  core: Core
+  $array: Array
+  $object: Object
+  $string: String
+
+deploy:
+  - "C:/Users/Fierry/Desktop/resources.js"
