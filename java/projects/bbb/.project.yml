@@ -1,0 +1,6 @@
+name: bbb
+src: app
+deploy:
+  - rls/
+dependences:
+  - cccBetter

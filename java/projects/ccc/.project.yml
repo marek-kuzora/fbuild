@@ -1,0 +1,4 @@
+name: cccBetter
+src: app
+deploy: 
+  - rls/

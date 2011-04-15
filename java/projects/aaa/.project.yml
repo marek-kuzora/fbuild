@@ -1,0 +1,7 @@
+name: aaa
+src: src
+deploy: 
+  - rls/
+dependences:
+  - bbb
+  - cccBetter
