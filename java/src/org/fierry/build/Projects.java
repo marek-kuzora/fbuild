@@ -29,7 +29,7 @@ public class Projects {
 	}
 	
 	/**
-	 * Loads projects from theirs locations as specified in %config%/projects.yml.
+	 * Loads projects from theirs locations as specified in %build%/projects.yml.
 	 */
 	@SuppressWarnings("unchecked")
 	private void loadProjects() {

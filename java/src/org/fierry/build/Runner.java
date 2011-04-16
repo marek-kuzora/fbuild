@@ -24,9 +24,10 @@ public class Runner {
 //		DeployThread thread = new DeployThread(current);		// deploing the project with Console.ERRORS logging only!
 //		thread.start();
 //		thread.wait();
-		synchronized (current) {
-			current.wait();
-		}
+//		synchronized (current) {
+//			current.wait();
+//		}
+		System.exit(0);
 	}
 	
 	private static FiltersRegistry getProjectFileFilters() {

@@ -1,6 +1,6 @@
 package org.fierry.build.files;
 
-public class MemoryFile implements IFile {
+public class MemoryFile {
 
 	private String name;
 	private StringBuilder builder;
@@ -14,7 +14,7 @@ public class MemoryFile implements IFile {
 		return name;
 	}
 	
-	@Override	public StringBuilder getOutput() {
+	public StringBuilder getOutput() {
 		return builder;
 	}
 
