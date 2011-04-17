@@ -3,19 +3,19 @@ package org.fierry.build.files;
 public class MemoryFile {
 
 	private String name;
-	private StringBuilder builder;
+	private String content;
 	
 	public MemoryFile(String name, String content) {
 		this.name = name;
-		this.builder = new StringBuilder().append(content);
+		this.content = content;
 	}
 	
 	public String getName() {
 		return name;
 	}
 	
-	public StringBuilder getOutput() {
-		return builder;
+	public String getOutput() {
+		return content;
 	}
 
 }

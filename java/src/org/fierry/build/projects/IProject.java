@@ -13,6 +13,8 @@ public interface IProject {
 	
 	public void build(FiltersRegistry filters);
 	
+	public void deploy(Boolean logging);
+	
 	public void setPackage(Path path);
 	
 	public void deletePackage(Path path);

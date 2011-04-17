@@ -1,9 +1,14 @@
 package org.fierry.build.files;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import org.fierry.build.projects.IProject;
@@ -11,7 +16,6 @@ import org.fierry.build.projects.IProject;
 public class TopPackage {
 	
 	private String name;
-	private IProject project;
 	private Map<Path, Package> pkgs;
 	
 	/**
@@ -21,9 +25,8 @@ public class TopPackage {
 	 *  <project-name>.<package-dir> -> otherwise
 	 * @param project 
 	 */
-	public TopPackage(String name, IProject project) {
+	public TopPackage(String name) {
 		this.name = name;
-		this.project = project;
 		this.pkgs = new HashMap<Path, Package>();
 	}
 	
@@ -31,10 +34,33 @@ public class TopPackage {
 	 * Builds top package content & deploys into specified locations.
 	 * @param dirs
 	 */
-	public void deploy(Set<Path> dirs) {
+	public void deploy(IProject project, Set<Path> dirs) {
+		System.out.println("Deploying... " + name);
+		Set<Package> set = new HashSet<Package>();
+		Queue<Package> queue = new LinkedList<Package>(pkgs.values());
 		
+		while(!queue.isEmpty()) {
+			Package pkg = queue.poll();
+			if(!set.contains(pkg)) {
+				set.add(pkg);
+				queue.addAll(pkg.getRequiredPackages(project));
+			}
+		}
+		
+		StringBuilder builder = new StringBuilder();
+		for(Package pkg : set) { 
+			pkg.appendTo(builder);
+		}
+		
+		for(Path path : dirs) {
+			try { 
+				Files.createDirectories(path);
+				Files.write(path.resolve(name + ".js"), builder.toString().getBytes()); 
+			} 
+			catch (IOException e) { throw new RuntimeException(e); }
+		}
 	}
-		
+	
 	/**
 	 * Sets package with the given path.
 	 * @param path - package location.
@@ -44,7 +70,7 @@ public class TopPackage {
 	}
 	
 	private String getPackageName(Path path) {
-		return path.toString().replaceAll(File.pathSeparator, ".");
+		return name + "." + path.toString().replaceAll(File.separator, ".");
 	}
 	
 	/**

@@ -1,10 +1,10 @@
 package org.fierry.build;
 
-import java.nio.file.Path;
-
-import org.fierry.build.filters.IFileFilter;
+import org.fierry.build.filters.DirectoryFilter;
+import org.fierry.build.filters.JavascriptFileFilter;
+import org.fierry.build.filters.PackageFileFilter;
+import org.fierry.build.filters.UnsupportedFileFilter;
 import org.fierry.build.projects.CurrentProject;
-import org.fierry.build.projects.IProject;
 import org.fierry.build.utils.FiltersRegistry;
 
 public class Runner {
@@ -19,41 +19,24 @@ public class Runner {
 
 		current.loadDependences(projects);
 		current.build(getProjectFileFilters());
-//		current.deploy(Console.WARNINGS);
+		current.deploy(true);
 
-//		DeployThread thread = new DeployThread(current);		// deploing the project with Console.ERRORS logging only!
+//		DeployThread thread = new DeployThread(current);
 //		thread.start();
 //		thread.wait();
-//		synchronized (current) {
-//			current.wait();
-//		}
-		System.exit(0);
+		
+		synchronized (current) {
+			current.wait();
+		}
 	}
 	
 	private static FiltersRegistry getProjectFileFilters() {
 		FiltersRegistry filters = new FiltersRegistry();
-		filters.register(new IFileFilter() {
-			
-			@Override
-			public void fileUpdated(Path path, IProject project) {
-				System.out.println("UPDATED: " + project.getName() + ", " + path);
-			}
-			
-			@Override
-			public void fileDeleted(Path path, IProject project) {
-				System.out.println("DELETED: " + project.getName() + ", " + path);
-			}
-			
-			@Override
-			public void fileCreated(Path path, IProject project) {
-				System.out.println("CREATED: " + project.getName() + ", "+ path + ", " + path.getNameCount());
-			}
-			
-			@Override
-			public Boolean accept(Path path, IProject project) {
-				return true;
-			}
-		});
+		
+		filters.register(new DirectoryFilter());
+		filters.register(new PackageFileFilter());
+		filters.register(new JavascriptFileFilter());
+		filters.register(new UnsupportedFileFilter());
 		
 		return filters;
 	}

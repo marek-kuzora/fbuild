@@ -28,7 +28,7 @@ public class Project implements IProject {
 	private Path dir;
 	private State state;
 	private ProjectY project;
-	private Set<IProject> projects;
+	private Map<String, IProject> projects;
 	private Map<Path, TopPackage> pkgs;
 	
 	public Project(Path dir) {
@@ -37,9 +37,9 @@ public class Project implements IProject {
 		
 		this.dir = dir;
 		this.state = State.INITIAL;
-		this.projects = new HashSet<IProject>();
-		
 		this.pkgs = new HashMap<Path, TopPackage>();
+		this.projects = new HashMap<String, IProject>();
+		
 		this.project = Resources.loadYaml(ProjectY.class, dir.resolve(FILE));
 	}
 
@@ -48,9 +48,9 @@ public class Project implements IProject {
 			for(String name : project.dependences) {
 				IProject p = registry.get(name);
 				
-				assert !projects.contains(p) : "Bidirectional relationship not allowed: " + getName() + " and " + p.getName();
+				assert !projects.containsValue(p) : "Bidirectional relationship not allowed: " + getName() + " and " + p.getName();
 
-				projects.add(p);
+				projects.put(name, p);
 				p.loadDependences(registry);
 			}
 			state = State.LOADED;
@@ -59,7 +59,7 @@ public class Project implements IProject {
 
 	@Override public void build(FiltersRegistry filters) {
 		if(state == State.LOADED) {
-			for(IProject p : projects) {
+			for(IProject p : projects.values()) {
 				p.build(filters);
 			}
 			
@@ -77,11 +77,22 @@ public class Project implements IProject {
 		}
 	}
 	
+	@Override public void deploy(Boolean logging) {
+		Set<Path> dirs = new HashSet<Path>();
+		for(String path : project.deploy) {
+			dirs.add(dir.resolve(path));
+		}
+		
+		for(TopPackage pkg : pkgs.values()) {
+			pkg.deploy(this, dirs);
+		}
+	}
+	
 	@Override public void setPackage(Path path) {
 		if(path.getNameCount() == 1) {
-			String name = isSrc(path) ? project.name : project.name + "." + path.toString();
+			String name = isSrc(path) ? project.name : project.name + "." + path;
 			
-			pkgs.put(path, new TopPackage(name, this));
+			pkgs.put(path, new TopPackage(name));
 		} else {
 			TopPackage top = pkgs.get(path.getName(0));
 			top.setPackage(path.subpath(1, path.getNameCount()));
@@ -100,12 +111,27 @@ public class Project implements IProject {
 			top.deletePackage(path.subpath(1, path.getNameCount()));
 		}
 	}
-
-	// Bad handling! The name starts with the project. Next for now we can require other packages within the
-	// current topPackage? e.g. fierry.test.a requires fierry.test.b & the b package is in the test/ directory instead of src!
+	
 	@Override public Package getPackage(String name) {
-		Path path = Paths.get(project.src, name.replace('.', File.pathSeparatorChar));
-		return getPackage(path);
+		String pname = name.substring(0, name.indexOf('.'));
+		
+		if(project.name.equals(pname)) {
+			return getPackage(translatePackageName(name));
+		} else if(projects.containsKey(pname)) {
+			return projects.get(pname).getPackage(name);
+		} else {
+			throw new IllegalArgumentException("Couldn't resolve package: " + name);
+		}
+	}
+	
+	private Path translatePackageName(String name) {
+		String subname = name.substring(name.indexOf('.') + 1);
+		Path path = Paths.get(subname.replace('.', File.separatorChar));
+		
+		if(!pkgs.containsKey(path.getName(0))) { 
+			path = Paths.get(project.src).resolve(path); 
+		}
+		return path;
 	}
 	
 	@Override public Package getPackage(Path path) {

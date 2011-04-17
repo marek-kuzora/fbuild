@@ -1,7 +1,11 @@
 package org.fierry.build.files;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+
+import org.fierry.build.projects.IProject;
 
 public class Package {
 
@@ -17,6 +21,17 @@ public class Package {
 		this.name = name;
 		this.conf = PackageY.EMPTY;
 		this.files = new HashMap<String, MemoryFile>();
+	}
+	
+	public void appendTo(StringBuilder builder) {
+		System.out.println("Outputing... " + name);
+		PackageBuilder pbuilder = new PackageBuilder(builder);
+		
+		pbuilder.buildHeading(name);
+		pbuilder.buildNamespaces(conf.namespace);
+		
+		pbuilder.buildFiles(files, conf.before, conf.after);
+		pbuilder.buildFooter(conf.require);
 	}
 	
 	/**
@@ -44,4 +59,21 @@ public class Package {
 		files.remove(name);
 	}
 	
+	public Collection<Package> getRequiredPackages(IProject project) {
+		Collection<Package> pkgs = new HashSet<Package>();
+		for(String name : conf.require) {
+			System.out.println(this.name + " requires " + name);
+			pkgs.add(project.getPackage(name));
+		}
+		return pkgs;
+	}
+	
+	@Override public int hashCode() {
+		return name.hashCode();
+	}
+	
+	@Override public boolean equals(Object obj) {
+		if(!(obj instanceof Package)) { return false; }
+		return obj != null && hashCode() == obj.hashCode();
+	}
 }

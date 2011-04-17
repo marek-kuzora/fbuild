@@ -10,6 +10,9 @@ public class CurrentProject extends Project {
 		super(getProjectDirectory());
 	}
 	
+	/**
+	 * Returns the project's file directory.
+	 */
 	private static Path getProjectDirectory() {
 		Path dir = Paths.get("").toAbsolutePath();
 		while(dir.getParent() != null) {
