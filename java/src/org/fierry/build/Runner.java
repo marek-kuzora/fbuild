@@ -1,7 +1,5 @@
 package org.fierry.build;
 
-import java.util.Date;
-
 import org.fierry.build.filters.DirectoryFilter;
 import org.fierry.build.filters.IgnoreSwpFileFilter;
 import org.fierry.build.filters.JavascriptFileFilter;
@@ -19,7 +17,6 @@ public class Runner {
 	 * @throws InterruptedException 
 	 */
 	public static void main(String[] args) throws InterruptedException {
-		Long start = new Date().getTime();
 		current = new CurrentProject();
 		Projects projects = new Projects(current);
 
@@ -27,7 +24,6 @@ public class Runner {
 		current.build(getProjectFileFilters());
 		current.deploy(true);
 
-		System.out.println(new Date().getTime()-start);
 		synchronized (current) {
 			current.wait();
 		}
