@@ -9,8 +9,10 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.fierry.build.filters.IFileFilter;
+import org.fierry.build.filters.UnsupportedFileFilter;
 import org.fierry.build.projects.IProject;
 import org.fierry.build.utils.FiltersRegistry;
 
@@ -32,12 +34,14 @@ public class ProjectThread extends Thread {
 		while(true) {
 			try {
 				Path dir = project.getDirectory();
-				WatchKey key = watcher.take();
+				WatchKey key = watcher.poll(15, TimeUnit.MILLISECONDS);
+				if(key == null) { continue; }
 				
 				for (WatchEvent<?> event: key.pollEvents()) {
 					Path abs = absolutePath(key, event);
 					Path file = dir.relativize(abs);
 
+					System.out.println("Received notification: " + file);
 					if(project.isReleaseDirectory(abs)) { continue; }
 					IFileFilter filter = filters.get(file, project);
 					
@@ -48,6 +52,11 @@ public class ProjectThread extends Thread {
 					
 					if(event.kind() == ENTRY_DELETE) { filter.fileDeleted(file, project); }
 					if(event.kind() == ENTRY_MODIFY) { filter.fileUpdated(file, project); }
+					
+					if(!(filter instanceof UnsupportedFileFilter)) { 
+						System.out.println("Deploy triggered by: " + file);
+						Runner.triggerDeploy();
+					}
 				}
 				key.reset();
 			}

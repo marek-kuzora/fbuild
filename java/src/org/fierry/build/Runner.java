@@ -1,6 +1,9 @@
 package org.fierry.build;
 
+import java.util.Date;
+
 import org.fierry.build.filters.DirectoryFilter;
+import org.fierry.build.filters.IgnoreSwpFileFilter;
 import org.fierry.build.filters.JavascriptFileFilter;
 import org.fierry.build.filters.PackageFileFilter;
 import org.fierry.build.filters.UnsupportedFileFilter;
@@ -9,22 +12,22 @@ import org.fierry.build.utils.FiltersRegistry;
 
 public class Runner {
 
+	private static CurrentProject current;
+	
 	/**
 	 * @param args
 	 * @throws InterruptedException 
 	 */
 	public static void main(String[] args) throws InterruptedException {
-		CurrentProject current = new CurrentProject();
+		Long start = new Date().getTime();
+		current = new CurrentProject();
 		Projects projects = new Projects(current);
 
 		current.loadDependences(projects);
 		current.build(getProjectFileFilters());
 		current.deploy(true);
 
-//		DeployThread thread = new DeployThread(current);
-//		thread.start();
-//		thread.wait();
-		
+		System.out.println(new Date().getTime()-start);
 		synchronized (current) {
 			current.wait();
 		}
@@ -36,9 +39,14 @@ public class Runner {
 		filters.register(new DirectoryFilter());
 		filters.register(new PackageFileFilter());
 		filters.register(new JavascriptFileFilter());
+		filters.register(new IgnoreSwpFileFilter());
 		filters.register(new UnsupportedFileFilter());
 		
 		return filters;
+	}
+	
+	public static void triggerDeploy() {
+		current.deploy(false);
 	}
 
 }

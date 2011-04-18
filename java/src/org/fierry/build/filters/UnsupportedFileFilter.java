@@ -5,7 +5,7 @@ import java.nio.file.Path;
 
 import org.fierry.build.projects.IProject;
 
-public class UnsupportedFileFilter implements IFileFilter {
+public class UnsupportedFileFilter extends ExtensionFileFilter {
 
 	@Override public Boolean accept(Path path, IProject project) {
 		return true;
