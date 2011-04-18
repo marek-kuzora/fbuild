@@ -35,7 +35,6 @@ public class TopPackage {
 	 * @param dirs
 	 */
 	public void deploy(IProject project, Set<Path> dirs) {
-//		System.out.println("Deploying... " + name);
 		Set<Package> set = new HashSet<Package>();
 		Queue<Package> queue = new LinkedList<Package>(pkgs.values());
 		

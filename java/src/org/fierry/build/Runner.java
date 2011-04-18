@@ -22,7 +22,7 @@ public class Runner {
 
 		current.loadDependences(projects);
 		current.build(getProjectFileFilters());
-		current.deploy(true);
+		current.deploy();
 
 		synchronized (current) {
 			current.wait();
@@ -42,7 +42,7 @@ public class Runner {
 	}
 	
 	public static void triggerDeploy() {
-		current.deploy(false);
+		current.deploy();
 	}
 
 }

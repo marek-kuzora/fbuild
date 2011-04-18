@@ -24,7 +24,6 @@ public class Package {
 	}
 	
 	public void appendTo(StringBuilder builder) {
-//		System.out.println("Outputing... " + name);
 		PackageBuilder pbuilder = new PackageBuilder(builder);
 		
 		pbuilder.buildHeading(name);
@@ -61,8 +60,8 @@ public class Package {
 	
 	public Collection<Package> getRequiredPackages(IProject project) {
 		Collection<Package> pkgs = new HashSet<Package>();
-		for(String name : conf.require) {
-//			System.out.println(this.name + " requires " + name);
+
+		for(String name : conf.vrequire) {
 			pkgs.add(project.getPackage(name));
 		}
 		return pkgs;

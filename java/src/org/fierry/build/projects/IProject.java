@@ -13,7 +13,8 @@ public interface IProject {
 	
 	public void build(FiltersRegistry filters);
 	
-	public void deploy(Boolean logging);
+	public void deploy();
+	
 	
 	public void setPackage(Path path);
 	
@@ -23,9 +24,12 @@ public interface IProject {
 	
 	public Package getPackage(String name);
 	
+	
 	public String getName();
 	
 	public Path getDirectory();
 	
 	public Boolean isReleaseDirectory(Path path);	
+	
+	public Boolean isProjectReferenced(String name);
 }

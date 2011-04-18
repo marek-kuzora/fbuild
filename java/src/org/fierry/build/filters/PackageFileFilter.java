@@ -22,6 +22,8 @@ public class PackageFileFilter implements IFileFilter {
 	@Override
 	public void fileUpdated(Path path, IProject project) {
 		PackageY conf = Resources.loadYaml(PackageY.class, project.getDirectory().resolve(path));
+		
+		conf.validateRequires(project);
 		project.getPackage(path.getParent()).setConfig(conf);
 	}
 	

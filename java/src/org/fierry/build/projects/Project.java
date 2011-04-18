@@ -78,7 +78,7 @@ public class Project implements IProject {
 		}
 	}
 	
-	@Override public void deploy(Boolean logging) {
+	@Override public void deploy() {
 		Long start = new Date().getTime();
 		Set<Path> dirs = new HashSet<Path>();
 		for(String path : project.deploy) {
@@ -116,15 +116,21 @@ public class Project implements IProject {
 	}
 	
 	@Override public Package getPackage(String name) {
-		String pname = name.substring(0, name.indexOf('.'));
-		
+		Integer idx = name.indexOf('.');
+		String pname = idx > -1 ? name.substring(0, idx) : name;
+
 		if(project.name.equals(pname)) {
 			return getPackage(translatePackageName(name));
 		} else if(projects.containsKey(pname)) {
 			return projects.get(pname).getPackage(name);
 		} else {
-			throw new IllegalArgumentException("Couldn't resolve package: " + name);
+			return null;
 		}
+	}
+	
+	@Override public Package getPackage(Path path) {
+		TopPackage top = pkgs.get(path.getName(0));
+		return top.getPackage(path.subpath(1, path.getNameCount()));
 	}
 	
 	private Path translatePackageName(String name) {
@@ -137,19 +143,24 @@ public class Project implements IProject {
 		return path;
 	}
 	
-	@Override public Package getPackage(Path path) {
-		TopPackage top = pkgs.get(path.getName(0));
-		return top.getPackage(path.subpath(1, path.getNameCount()));
-	}
-	
+	/**
+	 * Returns project name.
+	 */
 	@Override public String getName() {
 		return project.name;
 	}
 	
+	/**
+	 * Returns project directory.
+	 */
 	@Override public Path getDirectory() {
 		return dir;
 	}
 	
+	/**
+	 * Returns true if given directory is project's release directory.
+	 * @param Path absPath - directory.
+	 */
 	@Override public Boolean isReleaseDirectory(Path absPath) {
 		for(String rls : project.deploy) {
 			if(absPath.startsWith(dir.resolve(rls))) { return true; }
@@ -157,6 +168,19 @@ public class Project implements IProject {
 		return false;
 	}
 	
+	/**
+	 * Returns true if the given package name refers project that is referenced in this project.
+	 */
+	@Override public Boolean isProjectReferenced(String name) {
+		Integer idx = name.indexOf('.');
+		String pname = idx > -1 ? name.substring(0, idx) : name;
+
+		return getName().equals(pname) || projects.containsKey(pname); 
+	}
+	
+	/**
+	 * Returns hashCode based on project's name hashCode.
+	 */
 	@Override public int hashCode() {
 		return getName().hashCode();
 	}
