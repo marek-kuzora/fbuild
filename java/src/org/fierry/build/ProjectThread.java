@@ -41,7 +41,6 @@ public class ProjectThread extends Thread {
 					Path abs = absolutePath(key, event);
 					Path file = dir.relativize(abs);
 
-					System.out.println("Received notification: " + file);
 					if(project.isReleaseDirectory(abs)) { continue; }
 					IFileFilter filter = filters.get(file, project);
 					
@@ -54,8 +53,7 @@ public class ProjectThread extends Thread {
 					if(event.kind() == ENTRY_MODIFY) { filter.fileUpdated(file, project); }
 					
 					if(!(filter instanceof UnsupportedFileFilter)) { 
-						System.out.println("Deploy triggered by: " + file);
-						Runner.triggerDeploy();
+						Runner.triggerDeploy(file);
 					}
 				}
 				key.reset();

@@ -8,7 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -79,7 +78,6 @@ public class Project implements IProject {
 	}
 	
 	@Override public void deploy() {
-		Long start = new Date().getTime();
 		Set<Path> dirs = new HashSet<Path>();
 		for(String path : project.deploy) {
 			dirs.add(dir.resolve(path));
@@ -88,7 +86,6 @@ public class Project implements IProject {
 		for(TopPackage pkg : pkgs.values()) {
 			pkg.deploy(this, dirs);
 		}
-		System.out.println(new Date().getTime() - start);
 	}
 	
 	@Override public void setPackage(Path path) {
