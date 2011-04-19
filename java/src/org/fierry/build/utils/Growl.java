@@ -1,11 +1,9 @@
 package org.fierry.build.utils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class Growl {
 
@@ -24,11 +22,13 @@ public class Growl {
 	
 	private static String getScript(String name) {
 		try {
-			Path path = Paths.get(Growl.class.getResource(name).toURI());
-			return new String(Files.readAllBytes(path));
+			InputStream in = Growl.class.getResourceAsStream(name);
+			byte[] bytes = new byte[in.available()];
+			
+			in.read(bytes);
+			return new String(bytes);
 		}
 		catch(IOException e) { throw new RuntimeException(e); }
-		catch (URISyntaxException e) { throw new RuntimeException(e); }
 	}
 	
 	private static void executeScript(String cnt) {

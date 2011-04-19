@@ -1,6 +1,7 @@
 package org.fierry.build.utils;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,7 +13,10 @@ import org.yaml.snakeyaml.constructor.Constructor;
 public class Resources {
 
 	public static Path getBuildDirectory() {
-		try { return Paths.get(Resources.class.getProtectionDomain().getCodeSource().getLocation().toURI()); }
+		try { 
+			URI uri = Resources.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+			return Paths.get(uri).resolve("../").normalize(); 
+		}
 		catch(URISyntaxException e) { throw new RuntimeException(e); }
 	}
 	
