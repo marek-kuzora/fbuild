@@ -8,7 +8,7 @@ public class IgnoreSwpFileFilter extends UnsupportedFileFilter {
 	public static final String FILE_EXT = ".swp";
 
 	@Override public Boolean accept(Path path, IProject project) {
-		return acceppt(path, project, FILE_EXT);
+		return accept(path, project, FILE_EXT);
 	}
 	
 	@Override public void fileCreated(Path path, IProject project) {}

@@ -3,6 +3,7 @@ package org.fierry.build;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.fierry.build.filters.CoffeeScriptFileFilter;
 import org.fierry.build.filters.DirectoryFilter;
 import org.fierry.build.filters.IgnoreSwpFileFilter;
 import org.fierry.build.filters.JavascriptFileFilter;
@@ -43,6 +44,7 @@ public class Runner {
 		filters.register(new DirectoryFilter());
 		filters.register(new PackageFileFilter());
 		filters.register(new JavascriptFileFilter());
+		filters.register(new CoffeeScriptFileFilter());
 		filters.register(new IgnoreSwpFileFilter());
 		filters.register(new UnsupportedFileFilter());
 		

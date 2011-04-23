@@ -11,7 +11,7 @@ public class JavascriptFileFilter extends ExtensionFileFilter {
 	public static final String FILE_EXT = ".js";
 	
 	@Override public Boolean accept(Path path, IProject project) {
-		return acceppt(path, project, FILE_EXT);
+		return accept(path, project, FILE_EXT);
 	}
 	
 	@Override public void fileCreated(Path path, IProject project) {

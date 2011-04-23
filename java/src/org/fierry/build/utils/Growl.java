@@ -2,7 +2,6 @@ package org.fierry.build.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Path;
 
 public class Growl {
@@ -32,17 +31,8 @@ public class Growl {
 	}
 	
 	private static void executeScript(String cnt) {
-		Runtime rtm = Runtime.getRuntime();
 		String[] args = { "osascript" };
-		
-		try {
-			Process pr = rtm.exec(args);
-			OutputStream out = pr.getOutputStream();
-			
-			out.write(cnt.getBytes());
-			out.close();
-		}
-		catch(IOException e) { throw new RuntimeException(e); }
+		Shell.run(args, cnt.getBytes());
 	}
 	
 }
