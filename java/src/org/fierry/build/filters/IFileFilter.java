@@ -8,9 +8,9 @@ public interface IFileFilter {
 
 	public Boolean accept(Path path, IProject project);
 	
-	public void fileCreated(Path path, IProject project);
+	public Boolean fileCreated(Path path, IProject project);
 	
-	public void fileUpdated(Path path, IProject project);
+	public Boolean fileUpdated(Path path, IProject project);
 	
-	public void fileDeleted(Path path, IProject project);
+	public Boolean fileDeleted(Path path, IProject project);
 }

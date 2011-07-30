@@ -1,19 +1,21 @@
 package org.fierry.build.project;
 
+import static com.barbarysoftware.watchservice.StandardWatchEventKind.*;
 import static java.nio.file.FileVisitResult.*;
-import static java.nio.file.StandardWatchEventKind.*;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Path;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
 
 import org.fierry.build.projects.IProject;
 import org.fierry.build.utils.FiltersRegistry;
+
+import com.barbarysoftware.watchservice.WatchKey;
+import com.barbarysoftware.watchservice.WatchService;
+import com.barbarysoftware.watchservice.WatchableFile;
 
 public class Visitor implements FileVisitor<Path> {
 
@@ -32,9 +34,11 @@ public class Visitor implements FileVisitor<Path> {
 	}
 	
 	@Override public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-		if(project.isReleaseDirectory(dir)) { return SKIP_SUBTREE; }
+		if(project.isReleaseDirectory(dir) || project.isHiddenDirectory(dir)) { 
+			return SKIP_SUBTREE;
+		}
 		
-		WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+		WatchKey key = new WatchableFile(dir.toFile()).register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
 		paths.put(key, dir);
 		
 		Path relative = project.getDirectory().relativize(dir);

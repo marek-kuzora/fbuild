@@ -14,7 +14,14 @@ public abstract class ExtensionFileFilter implements IFileFilter {
 		Integer idx = name.lastIndexOf('.');
 		String ext = idx < 0 ? name : name.substring(name.lastIndexOf('.'));
 
-		return ext.equals(expected);
+		return ext.endsWith(expected);
+	}
+	
+	public Boolean accept(Path path, IProject project, String[] expectedArr) {
+		for(String expected : expectedArr) {
+			if(accept(path, project, expected)) { return true; }
+		}
+		return false;
 	}
 
 }

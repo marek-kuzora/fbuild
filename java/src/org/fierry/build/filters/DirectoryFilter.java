@@ -14,16 +14,20 @@ public class DirectoryFilter implements IFileFilter {
 	}
 
 	@Override
-	public void fileCreated(Path path, IProject project) {
+	public Boolean fileCreated(Path path, IProject project) {
 		project.setPackage(path);
+		return true;
 	}
 
 	@Override
-	public void fileUpdated(Path path, IProject project) {}
+	public Boolean fileUpdated(Path path, IProject project) {
+		return false;
+	}
 
 	@Override
-	public void fileDeleted(Path path, IProject project) {
+	public Boolean fileDeleted(Path path, IProject project) {
 		project.deletePackage(path);
+		return true;
 	}
 
 }

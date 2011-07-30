@@ -15,12 +15,12 @@ public class CoffeeScriptFileFilter extends ExtensionFileFilter {
 	}
 
 	@Override
-	public void fileCreated(Path path, IProject project) {
-		fileUpdated(path, project);
+	public Boolean fileCreated(Path path, IProject project) {
+		return fileUpdated(path, project);
 	}
 
 	@Override
-	public void fileUpdated(Path path, IProject project) {
+	public Boolean fileUpdated(Path path, IProject project) {
 		Path abs = project.getDirectory().resolve(path);
 		String[] args = { "coffee", "-p", "-c", abs.toString() };
 		
@@ -29,12 +29,14 @@ public class CoffeeScriptFileFilter extends ExtensionFileFilter {
 			
 		MemoryFile file = new MemoryFile(name, content);
 		project.getPackage(path.getParent()).setFile(file);
+		return true;
 	}
 
 	@Override
-	public void fileDeleted(Path path, IProject project) {
+	public Boolean fileDeleted(Path path, IProject project) {
 		String name = path.getFileName().toString();
 		project.getPackage(path.getParent()).deleteFile(name);
+		return true;
 	}
 
 }

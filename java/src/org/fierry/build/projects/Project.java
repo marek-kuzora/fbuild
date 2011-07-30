@@ -2,12 +2,9 @@ package org.fierry.build.projects;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,6 +18,9 @@ import org.fierry.build.project.State;
 import org.fierry.build.project.Visitor;
 import org.fierry.build.utils.Resources;
 import org.fierry.build.utils.FiltersRegistry;
+
+import com.barbarysoftware.watchservice.WatchKey;
+import com.barbarysoftware.watchservice.WatchService;
 
 public class Project implements IProject {
 	public static final String FILE = ".project.yml";
@@ -64,7 +64,7 @@ public class Project implements IProject {
 			}
 			
 			try {
-				WatchService watcher = FileSystems.getDefault().newWatchService();
+				WatchService watcher = WatchService.newWatchService();
 				Map<WatchKey, Path> paths = new HashMap<WatchKey, Path>();
 				
 				Files.walkFileTree(dir, new Visitor(this, watcher, filters, paths));
@@ -158,9 +158,19 @@ public class Project implements IProject {
 	 * Returns true if given directory is project's release directory.
 	 * @param Path absPath - directory.
 	 */
-	@Override public Boolean isReleaseDirectory(Path absPath) {
+	@Override public Boolean isReleaseDirectory(Path abs) {
 		for(String rls : project.deploy) {
-			if(absPath.startsWith(dir.resolve(rls))) { return true; }
+			if(abs.startsWith(dir.resolve(rls))) { return true; }
+		}
+		return false;
+	}
+	
+	@Override public Boolean isHiddenDirectory(Path abs) {
+		int length = abs.getNameCount();
+		if(!Files.isDirectory(abs)) { length--; }
+		
+		for(int i = 0; i < length; i++) {
+			if(abs.getName(i).toString().startsWith(".")) { return true; }
 		}
 		return false;
 	}

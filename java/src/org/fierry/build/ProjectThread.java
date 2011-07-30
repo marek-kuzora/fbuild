@@ -1,20 +1,23 @@
 package org.fierry.build;
 
-import static java.nio.file.StandardWatchEventKind.*;
+import static com.barbarysoftware.watchservice.StandardWatchEventKind.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
+import java.nio.file.attribute.FileTime;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.fierry.build.filters.IFileFilter;
-import org.fierry.build.filters.UnsupportedFileFilter;
 import org.fierry.build.projects.IProject;
 import org.fierry.build.utils.FiltersRegistry;
+
+import com.barbarysoftware.watchservice.WatchEvent;
+import com.barbarysoftware.watchservice.WatchKey;
+import com.barbarysoftware.watchservice.WatchService;
+import com.barbarysoftware.watchservice.WatchableFile;
 
 public class ProjectThread extends Thread {
 	private IProject project;
@@ -31,33 +34,46 @@ public class ProjectThread extends Thread {
 	}
 	
 	@Override public void run() {
+		Map<Path, FileTime> times = new HashMap<Path, FileTime>();
+		
 		while(true) {
 			try {
 				Path dir = project.getDirectory();
-				WatchKey key = watcher.poll(15, TimeUnit.MILLISECONDS);
+				WatchKey key = watcher.take();
 				if(key == null) { continue; }
 				
 				for (WatchEvent<?> event: key.pollEvents()) {
+					Boolean deploy = false;
 					Path abs = absolutePath(key, event);
 					Path file = dir.relativize(abs);
-
-					if(project.isReleaseDirectory(abs)) { continue; }
-					IFileFilter filter = filters.get(file, project);
 					
+					if(Files.exists(abs)) {
+						FileTime time = Files.getLastModifiedTime(abs);
+						if(times.containsKey(abs) && time.compareTo(times.get(abs)) <= 0) { continue; }
+						else { times.put(abs, time); }
+					}
+
+					if(project.isReleaseDirectory(abs) || project.isHiddenDirectory(dir)) { 
+						continue; 
+					}
+					
+					IFileFilter filter = filters.get(file, project);
 					if(event.kind() == ENTRY_CREATE) {
-						filter.fileCreated(file, project);
+						deploy = filter.fileCreated(file, project);
 						if(Files.isDirectory(abs)) { registerDirectoryWatcher(abs); }
 					}
 					
-					if(event.kind() == ENTRY_DELETE) { filter.fileDeleted(file, project); }
-					if(event.kind() == ENTRY_MODIFY) { filter.fileUpdated(file, project); }
+					if(event.kind() == ENTRY_DELETE) { deploy = filter.fileDeleted(file, project); }
+					if(event.kind() == ENTRY_MODIFY) { deploy = filter.fileUpdated(file, project); }
 					
-					if(!(filter instanceof UnsupportedFileFilter)) { 
+					if(deploy) {
 						Runner.triggerDeploy(file);
 					}
+					//System.out.println("Date: " + new Date() + ", kind: " + event.kind() + ", file: " + ((File)event.context()).getName());
 				}
 				key.reset();
 			}
+			catch(IOException e) { throw new RuntimeException(e); }
 			catch(InterruptedException e) { return; }
 		}
 	}
@@ -68,7 +84,7 @@ public class ProjectThread extends Thread {
 	 * @param event
 	 */
 	private Path absolutePath(WatchKey key, WatchEvent<?> event) {
-		return paths.get(key).resolve((Path)event.context());
+		return paths.get(key).resolve(((File)event.context()).toPath());
 	}
 	
 	/**
@@ -77,7 +93,8 @@ public class ProjectThread extends Thread {
 	 */
 	private void registerDirectoryWatcher(Path dir) {
 		try {
-			WatchKey ckey = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+			WatchKey ckey = new WatchableFile(dir.toFile()).register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+//			WatchKey ckey = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
 			paths.put(ckey, dir);
 		} catch(IOException e) { throw new RuntimeException(e); }
 	}

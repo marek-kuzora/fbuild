@@ -15,22 +15,24 @@ public class PackageFileFilter implements IFileFilter {
 	}
 
 	@Override
-	public void fileCreated(Path path, IProject project) {
-		fileUpdated(path, project);
+	public Boolean fileCreated(Path path, IProject project) {
+		return fileUpdated(path, project);
 	}
 
 	@Override
-	public void fileUpdated(Path path, IProject project) {
+	public Boolean fileUpdated(Path path, IProject project) {
 		PackageY conf = Resources.loadYaml(PackageY.class, project.getDirectory().resolve(path));
 		
 		conf.validateRequires(project);
 		project.getPackage(path.getParent()).setConfig(conf);
+		return true;
 	}
 	
 
 	@Override
-	public void fileDeleted(Path path, IProject project) {
+	public Boolean fileDeleted(Path path, IProject project) {
 		project.getPackage(path.getParent()).setConfig(PackageY.EMPTY);
+		return true;
 	}
 
 }

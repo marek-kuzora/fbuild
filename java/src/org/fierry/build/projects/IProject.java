@@ -31,5 +31,7 @@ public interface IProject {
 	
 	public Boolean isReleaseDirectory(Path path);	
 	
+	public Boolean isHiddenDirectory(Path path);
+	
 	public Boolean isProjectReferenced(String name);
 }
