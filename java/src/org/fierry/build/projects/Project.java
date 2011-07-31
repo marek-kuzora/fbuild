@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -65,10 +66,11 @@ public class Project implements IProject {
 			
 			try {
 				WatchService watcher = WatchService.newWatchService();
+				Map<Path, FileTime> files = new HashMap<Path, FileTime>();
 				Map<WatchKey, Path> paths = new HashMap<WatchKey, Path>();
 				
-				Files.walkFileTree(dir, new Visitor(this, watcher, filters, paths));
-				ProjectThread thread = new ProjectThread(this, watcher, filters, paths);
+				Files.walkFileTree(dir, new Visitor(this, watcher, filters, paths, files));
+				ProjectThread thread = new ProjectThread(this, watcher, filters, paths, files);
 				thread.start();
 			} 
 			catch(IOException e) { throw new RuntimeException(e); }

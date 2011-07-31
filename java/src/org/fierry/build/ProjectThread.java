@@ -1,13 +1,14 @@
 package org.fierry.build;
 
-import static com.barbarysoftware.watchservice.StandardWatchEventKind.*;
+import static com.barbarysoftware.watchservice.StandardWatchEventKind.ENTRY_CREATE;
+import static com.barbarysoftware.watchservice.StandardWatchEventKind.ENTRY_DELETE;
+import static com.barbarysoftware.watchservice.StandardWatchEventKind.ENTRY_MODIFY;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -15,7 +16,6 @@ import org.fierry.build.filters.IFileFilter;
 import org.fierry.build.projects.IProject;
 import org.fierry.build.utils.FiltersRegistry;
 
-import com.barbarysoftware.watchservice.StandardWatchEventKind;
 import com.barbarysoftware.watchservice.WatchEvent;
 import com.barbarysoftware.watchservice.WatchEvent.Kind;
 import com.barbarysoftware.watchservice.WatchKey;
@@ -27,18 +27,18 @@ public class ProjectThread extends Thread {
 	private FiltersRegistry filters;
 	private WatchService watcher;
 	private Map<WatchKey, Path> paths;
+	private Map<Path, FileTime> files;
 	
-	public ProjectThread(IProject project, WatchService watcher, FiltersRegistry filters, Map<WatchKey, Path> paths) {
+	public ProjectThread(IProject project, WatchService watcher, FiltersRegistry filters, Map<WatchKey, Path> paths, Map<Path, FileTime> files) {
 		this.project = project;
 		this.watcher = watcher;
 
 		this.paths = paths;
+		this.files = files;
 		this.filters = filters;
 	}
 	
 	@Override public void run() {
-		Map<Path, FileTime> files = new HashMap<Path, FileTime>();
-		
 		while(true) {
 			try {
 				Path dir = project.getDirectory();
@@ -69,7 +69,7 @@ public class ProjectThread extends Thread {
 					if(deploy) {
 						Runner.triggerDeploy(file);
 					}
-					System.out.println("kind: " + event.kind() + ", file: " + ((File)event.context()).getName());
+					System.out.println("kind: " + kind + ", file: " + ((File)event.context()).getName());
 				}
 				key.reset();
 			}
@@ -78,7 +78,9 @@ public class ProjectThread extends Thread {
 		}
 	}
 	
-	private Kind<WatchableFile> getEventKind(Path abs, Map<Path, FileTime> files) throws IOException {
+	private Kind<WatchableFile> getEventKind(Path abs, Map<Path, FileTime> files) throws IOException, InterruptedException {
+		TimeUnit.MILLISECONDS.sleep(15);
+		
 		if(Files.exists(abs)) {
 			FileTime time = Files.getLastModifiedTime(abs);
 			if(!files.containsKey(abs)) {
@@ -91,6 +93,7 @@ public class ProjectThread extends Thread {
 			}
 			return null;
 		}
+		System.out.println(abs + " --- " + Files.exists(abs));
 		return ENTRY_DELETE;
 	}
 	

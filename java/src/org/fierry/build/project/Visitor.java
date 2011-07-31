@@ -6,8 +6,10 @@ import static java.nio.file.FileVisitResult.*;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.util.Map;
 
 import org.fierry.build.projects.IProject;
@@ -24,12 +26,14 @@ public class Visitor implements FileVisitor<Path> {
 	private WatchService watcher;
 	
 	private Map<WatchKey, Path> paths;
+	private Map<Path, FileTime> files;
 	
-	public Visitor(IProject project, WatchService watcher, FiltersRegistry filters, Map<WatchKey, Path> paths) {
+	public Visitor(IProject project, WatchService watcher, FiltersRegistry filters, Map<WatchKey, Path> paths, Map<Path, FileTime> files) {
 		this.project = project;
 		this.watcher = watcher;
 
 		this.paths = paths;
+		this.files = files;
 		this.filters = filters;
 	}
 	
@@ -40,6 +44,7 @@ public class Visitor implements FileVisitor<Path> {
 		
 		WatchKey key = new WatchableFile(dir.toFile()).register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
 		paths.put(key, dir);
+		files.put(dir, Files.getLastModifiedTime(dir));
 		
 		Path relative = project.getDirectory().relativize(dir);
 		filters.get(relative, project).fileCreated(relative, project);
@@ -48,6 +53,8 @@ public class Visitor implements FileVisitor<Path> {
 	}
 
 	@Override public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+		files.put(file, Files.getLastModifiedTime(file));
+		
 		Path relative = project.getDirectory().relativize(file);
 		filters.get(relative, project).fileCreated(relative, project);
 		
