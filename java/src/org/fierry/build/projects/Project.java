@@ -126,6 +126,8 @@ public class Project implements IProject {
 	}
 	
 	@Override public Package getPackage(Path path) {
+		assert path != null : "Path is null. Probably missplaced file in root directory.";
+		
 		TopPackage top = pkgs.get(path.getName(0));
 		return top.getPackage(path.subpath(1, path.getNameCount()));
 	}

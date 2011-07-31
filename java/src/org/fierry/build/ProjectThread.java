@@ -9,12 +9,15 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.fierry.build.filters.IFileFilter;
 import org.fierry.build.projects.IProject;
 import org.fierry.build.utils.FiltersRegistry;
 
+import com.barbarysoftware.watchservice.StandardWatchEventKind;
 import com.barbarysoftware.watchservice.WatchEvent;
+import com.barbarysoftware.watchservice.WatchEvent.Kind;
 import com.barbarysoftware.watchservice.WatchKey;
 import com.barbarysoftware.watchservice.WatchService;
 import com.barbarysoftware.watchservice.WatchableFile;
@@ -34,48 +37,61 @@ public class ProjectThread extends Thread {
 	}
 	
 	@Override public void run() {
-		Map<Path, FileTime> times = new HashMap<Path, FileTime>();
+		Map<Path, FileTime> files = new HashMap<Path, FileTime>();
 		
 		while(true) {
 			try {
 				Path dir = project.getDirectory();
 				WatchKey key = watcher.take();
 				if(key == null) { continue; }
-				
+
 				for (WatchEvent<?> event: key.pollEvents()) {
 					Boolean deploy = false;
 					Path abs = absolutePath(key, event);
 					Path file = dir.relativize(abs);
 					
-					if(Files.exists(abs)) {
-						FileTime time = Files.getLastModifiedTime(abs);
-						if(times.containsKey(abs) && time.compareTo(times.get(abs)) <= 0) { continue; }
-						else { times.put(abs, time); }
-					}
-
 					if(project.isReleaseDirectory(abs) || project.isHiddenDirectory(dir)) { 
-						continue; 
+						continue;
 					}
 					
 					IFileFilter filter = filters.get(file, project);
-					if(event.kind() == ENTRY_CREATE) {
+					Kind<WatchableFile> kind = getEventKind(abs, files);
+
+					if(kind == null) { continue; }
+					if(kind == ENTRY_CREATE) {
 						deploy = filter.fileCreated(file, project);
 						if(Files.isDirectory(abs)) { registerDirectoryWatcher(abs); }
 					}
 					
-					if(event.kind() == ENTRY_DELETE) { deploy = filter.fileDeleted(file, project); }
-					if(event.kind() == ENTRY_MODIFY) { deploy = filter.fileUpdated(file, project); }
+					if(kind == ENTRY_DELETE) { deploy = filter.fileDeleted(file, project); }
+					if(kind == ENTRY_MODIFY) { deploy = filter.fileUpdated(file, project); }
 					
 					if(deploy) {
 						Runner.triggerDeploy(file);
 					}
-					//System.out.println("Date: " + new Date() + ", kind: " + event.kind() + ", file: " + ((File)event.context()).getName());
+					System.out.println("kind: " + event.kind() + ", file: " + ((File)event.context()).getName());
 				}
 				key.reset();
 			}
 			catch(IOException e) { throw new RuntimeException(e); }
 			catch(InterruptedException e) { return; }
 		}
+	}
+	
+	private Kind<WatchableFile> getEventKind(Path abs, Map<Path, FileTime> files) throws IOException {
+		if(Files.exists(abs)) {
+			FileTime time = Files.getLastModifiedTime(abs);
+			if(!files.containsKey(abs)) {
+				files.put(abs, time);
+				return ENTRY_CREATE;
+			}
+			if(time.compareTo(files.get(abs)) > 0) {
+				files.put(abs, time);
+				return ENTRY_MODIFY;
+			}
+			return null;
+		}
+		return ENTRY_DELETE;
 	}
 	
 	/**
