@@ -7,8 +7,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.fierry.build.filters.FileFiltersRegistry;
+import org.fierry.build.project.ExternsVisitor;
 import org.fierry.build.utils.Resources;
-import org.fierry.build.visitors.ExternsVisitor;
 import org.fierry.build.yaml.BuildY;
 
 public class Build {

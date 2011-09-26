@@ -13,13 +13,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.fierry.build.files.StandardFile;
-import org.fierry.build.files.FierryFile;
+import org.fierry.build.files.ScriptFile;
 import org.fierry.build.filters.FileFiltersRegistry;
+import org.fierry.build.project.ExternsVisitor;
+import org.fierry.build.project.ProjectThread;
+import org.fierry.build.project.Source;
+import org.fierry.build.project.SourceVisitor;
 import org.fierry.build.utils.Resources;
-import org.fierry.build.visitors.ExternsVisitor;
-import org.fierry.build.visitors.SourceVisitor;
 import org.fierry.build.yaml.ProjectY;
-import org.fierry.build.yaml.Source;
 
 import com.barbarysoftware.watchservice.WatchKey;
 import com.barbarysoftware.watchservice.WatchService;
@@ -39,8 +40,7 @@ public class Project {
 	private Collection<Path> externs;
 	private Collection<Source> sources;
 	
-	private StandardFile init;
-	private Map<Path, FierryFile> scripts;
+	private Map<Path, ScriptFile> scripts;
 	private Map<Path, StandardFile> styles;
 	
 	private Boolean scriptsDeploy = true;
@@ -56,9 +56,13 @@ public class Project {
 		this.externs = raw.getExports();
 		this.sources = raw.getSources();
 		
-		this.init    = new StandardFile();
-		this.scripts = new HashMap<Path, FierryFile>();
+		this.scripts = new HashMap<Path, ScriptFile>();
 		this.styles  = new HashMap<Path, StandardFile>();
+	}
+	
+	public Project(String name) {
+		this.name = name;
+		this.dir  = Resources.getBuildDirectory();
 	}
 	
 	public void build(FileFiltersRegistry filters) {
@@ -117,10 +121,12 @@ public class Project {
 				builder.append(new String(Files.readAllBytes(library)));
 				builder.append("\r\n");
 			}
-			for(FierryFile file : scripts.values()) {
+			for(ScriptFile file : scripts.values()) {
 				file.deploy(builder);
 			}
-			init.deploy(builder);
+			
+			String mainName = getScriptFile(main).getName();
+			builder.append("run('/").append(mainName).append("');");
 		}
 		return builder.toString().getBytes();
 	}
@@ -197,22 +203,12 @@ public class Project {
 		return cnt.replaceAll("\\$\\{name\\}", name).getBytes();
 	}
 	
-	public StandardFile getScriptFile(Path path) {
-		if(main.equals(path)) { return getMainFile(); }
-		else { return getFierryFile(path); }
-	}
-	
-	public FierryFile getFierryFile(Path path) {
+	public ScriptFile getScriptFile(Path path) {
 		if(!scripts.containsKey(path)) {
-			scripts.put(path, new FierryFile(toProjectPath(path)));
+			scripts.put(path, new ScriptFile(toProjectPath(path)));
 		}
 		scriptsDeploy = true;
 		return scripts.get(path);
-	}
-	
-	public StandardFile getMainFile() {
-		scriptsDeploy = true;
-		return init;
 	}
 	
 	public StandardFile getCssFile(Path path) {

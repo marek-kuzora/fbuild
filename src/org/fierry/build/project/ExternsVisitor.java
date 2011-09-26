@@ -1,4 +1,4 @@
-package org.fierry.build.visitors;
+package org.fierry.build.project;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;

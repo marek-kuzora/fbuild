@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.fierry.build.app.Project;
+import org.fierry.build.project.Source;
 import org.fierry.build.utils.Resources;
 
 public class ProjectY {
@@ -59,23 +60,24 @@ public class ProjectY {
 		}
 		return exports;
 	}
-	
+
 	public Collection<Source> getSources() {
 		Collection<Source> sources = new ArrayList<Source>();
 		
-		for(Object obj : this.source) {
-			if(obj instanceof String) {
-				String str = (String) obj;
-				sources.add(new Source(str, dir));
-			}
-			
-			if(obj instanceof List) {
-				@SuppressWarnings("unchecked")
-				List<String> list = (List<String>)obj;
-				sources.add(new Source(list.get(0), list.get(1), dir));
+		if(this.source != null) {
+			for(Object obj : this.source) {
+				if(obj instanceof String) {
+					String str = (String) obj;
+					sources.add(new Source(str, dir));
+				}
+				
+				if(obj instanceof List) {
+					@SuppressWarnings("unchecked")
+					List<String> list = (List<String>)obj;
+					sources.add(new Source(list.get(0), list.get(1), dir));
+				}
 			}
 		}
 		return sources;
 	}
-	
 }

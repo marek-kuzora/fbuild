@@ -1,4 +1,4 @@
-package org.fierry.build.utils;
+package org.fierry.build.project;
 
 import java.util.ArrayList;
 import java.util.Collection;

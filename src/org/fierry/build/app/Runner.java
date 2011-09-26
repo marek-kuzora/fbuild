@@ -11,7 +11,7 @@ import org.fierry.build.filters.FileFiltersRegistry;
 import org.fierry.build.filters.IgnoreFileFilter;
 import org.fierry.build.filters.JavaScriptFileFilter;
 import org.fierry.build.filters.UnsupportedFileFilter;
-import org.fierry.build.utils.Args;
+import org.fierry.build.project.Args;
 
 public class Runner {
 
@@ -44,28 +44,13 @@ public class Runner {
 	}
 	
 	private static void create(Build file, Collection<String> projects) {
-		if(projects.size() == 0) {
-			throw new IllegalArgumentException("Cannot create project with no given name.");
-		}
+		assert projects.size() > 0 : "Cannot create project with no given name.";
+
 //		for(String project : projects) {
 //			file.createProject(project);
 //		}
 	}
 	
-	/**
-	 * Argumenty linii poleceń:
-	 * 1. fierry -build <projects>, fierry -b <projects> 
-	 *    - wykonuje standardowy build projektów i obserwuje dalsze zmiany.
-	 *    - brak podanych projektów skutkuje odpaleniem builda dla wszystkich
-	 *    
-	 * 2. fierry -compile <projects>, fierry -c <projects>
-	 *    - wykonuje kompilację JS za pomocą Closure Compiler, oraz minifikację CSS.
-	 *    - brak podanych projektów skutkuje odpaleniem kompilacji dla wszystkich
-	 *    
-	 * 3. fierry -new <project>, fierry -n <project>
-	 *    - tworzy konfigurację dla nowego projektu.
-	 *    - brak podania nazwy projektu, bądź podanie istniejącej jest traktowane jako błąd. 
-	 */
 	private static FileFiltersRegistry getProjectFileFilters() {
 		FileFiltersRegistry filters = new FileFiltersRegistry();
 		

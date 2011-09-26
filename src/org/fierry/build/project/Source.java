@@ -1,4 +1,4 @@
-package org.fierry.build.yaml;
+package org.fierry.build.project;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

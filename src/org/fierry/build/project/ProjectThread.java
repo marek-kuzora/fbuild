@@ -1,4 +1,4 @@
-package org.fierry.build.app;
+package org.fierry.build.project;
 
 import static com.barbarysoftware.watchservice.StandardWatchEventKind.ENTRY_CREATE;
 import static com.barbarysoftware.watchservice.StandardWatchEventKind.ENTRY_DELETE;
@@ -12,6 +12,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.fierry.build.app.Project;
 import org.fierry.build.filters.FileFiltersRegistry;
 import org.fierry.build.filters.IFileFilter;
 

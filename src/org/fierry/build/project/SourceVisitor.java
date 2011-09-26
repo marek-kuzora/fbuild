@@ -1,4 +1,4 @@
-package org.fierry.build.visitors;
+package org.fierry.build.project;
 
 import static com.barbarysoftware.watchservice.StandardWatchEventKind.*;
 import static java.nio.file.FileVisitResult.*;
