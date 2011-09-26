@@ -1,0 +1,8 @@
+#Sun Sep 25 21:46:30 CEST 2011
+eclipse.preferences.version=1
+encoding//src/org/fierry/build/app/Build.java=UTF-8
+encoding//src/org/fierry/build/app/Project.java=UTF-8
+encoding//src/org/fierry/build/app/Runner.java=UTF-8
+encoding//src/org/fierry/build/files/FierryFile.java=UTF-8
+encoding//src/org/fierry/build/visitors/ExternsVisitor.java=UTF-8
+encoding//src/org/fierry/build/visitors/SourceVisitor.java=UTF-8
