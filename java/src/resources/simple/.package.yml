@@ -1,7 +1,0 @@
-name: simple
-after: 
-  - SimpleA2.js
-before: 
-  - SimpleA1.js
-namespace:
-  simple: Core.Simple
