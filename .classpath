@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="lib/closure_compiler.jar"/>
 	<classpathentry kind="lib" path="lib/watch_service.jar"/>
 	<classpathentry kind="lib" path="lib/yui_compressor.jar"/>
+	<classpathentry kind="lib" path="lib/apache-commons-lang.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

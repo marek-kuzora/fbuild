@@ -1,6 +1,6 @@
 package org.fierry.build.files;
 
-import org.fierry.build.utils.FileUtils;
+import org.fierry.build.utils.Lines;
 
 public class StandardFile {
 
@@ -9,13 +9,14 @@ public class StandardFile {
 	public void deploy(StringBuilder builder) {
 		if(content.length() > 0) {
 			builder.append(content);
-			builder.append(FileUtils.getLineSeparator());
+			builder.append(Lines.separator);
 		}
 	}
 	
 	public void setContent(byte[] content) {
 		setContent(new String(content));
 	}
+	
 	public void setContent(String content) {
 		this.content = content;
 	}

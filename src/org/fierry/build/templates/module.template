@@ -1,5 +1,0 @@
-modules["${name}"] = function(require) {
-var exports = {};
-${content}
-return exports;
-}

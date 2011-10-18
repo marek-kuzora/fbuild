@@ -8,7 +8,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.fierry.build.utils.FileUtils;
+import org.fierry.build.utils.Extension;
 
 import com.google.javascript.jscomp.JSSourceFile;
 
@@ -29,7 +29,7 @@ public class ExternsVisitor implements FileVisitor<Path> {
 	}
 
 	@Override public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-		if(FileUtils.getExtension(path).endsWith(".js")) {
+		if(Extension.get(path).endsWith(".js")) {
 			externs.add(JSSourceFile.fromFile(path.toFile()));
 		}
 		return FileVisitResult.CONTINUE;

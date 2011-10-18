@@ -7,7 +7,15 @@ import java.io.OutputStream;
 public class Shell {
 
 	public static String run(String[] args) {
-		return run(args, null);
+		return run(args, new byte[0]);
+	}
+	
+	public static String run(String[] args, String string) {
+		return run(args, string.getBytes());
+	}
+	
+	public static String run(String[] args, StringBuilder builder) {
+		return run(args, builder.toString().getBytes());
 	}
 	
 	public static String run(String[] args, byte[] bytes) {

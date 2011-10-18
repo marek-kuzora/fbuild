@@ -9,26 +9,27 @@ public class CoffeeScriptFileFilter extends ExtensionFileFilter implements IFile
 	public static final String FILE_EXT = ".coffee";
 
 	@Override
-	public Boolean accept(Path absolute, Project project) {
-		return accept(absolute, project, FILE_EXT);
+	public Boolean accept(Path path, Project project) {
+		return accept(path, project, FILE_EXT);
 	}
 
 	@Override
-	public Boolean fileCreated(Path absolute, Project project) {
-		return fileUpdated(absolute, project);
-
+	public Boolean fileCreated(Path path, Project project) {
+		return fileUpdated(path, project);
 	}
 
 	@Override
-	public Boolean fileUpdated(Path absolute, Project project) {
-		String[] args = { "coffee", "-p", "-c", "-b", absolute.toString() };
-		project.getScriptFile(absolute).setContent(Shell.run(args));
+	public Boolean fileUpdated(Path path, Project project) {
+		String   file = project.readFile(path);
+		String[] args = { "coffee", "-s", "-c", "-b" };
+
+		project.getScriptFile(path).setContent(Shell.run(args, file));
 		return true;
 	}
 
 	@Override
-	public Boolean fileDeleted(Path absolute, Project project) {
-		project.getScriptFile(absolute).removeContent();
+	public Boolean fileDeleted(Path path, Project project) {
+		project.getScriptFile(path).removeContent();
 		return true;
 	}
 }

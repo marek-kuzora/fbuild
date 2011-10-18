@@ -11,7 +11,10 @@ import java.nio.file.attribute.FileTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.fierry.build.files.RootFile;
 import org.fierry.build.files.StandardFile;
 import org.fierry.build.files.ScriptFile;
 import org.fierry.build.filters.FileFiltersRegistry;
@@ -19,7 +22,9 @@ import org.fierry.build.project.ExternsVisitor;
 import org.fierry.build.project.ProjectThread;
 import org.fierry.build.project.Source;
 import org.fierry.build.project.SourceVisitor;
-import org.fierry.build.utils.Resources;
+import org.fierry.build.utils.Directory;
+import org.fierry.build.utils.Extension;
+import org.fierry.build.utils.Resource;
 import org.fierry.build.yaml.ProjectY;
 
 import com.barbarysoftware.watchservice.WatchKey;
@@ -40,15 +45,18 @@ public class Project {
 	private Collection<Path> externs;
 	private Collection<Source> sources;
 	
+	private Map<Path, RootFile> roots;
 	private Map<Path, ScriptFile> scripts;
 	private Map<Path, StandardFile> styles;
 	
+	private Map<String, String> aliases;
+
 	private Boolean scriptsDeploy = true;
 	private Boolean stylesDeploy  = true;
 	
 	public Project(String name, ProjectY raw) {
 		this.name = name;
-		this.dir  = Resources.getBuildDirectory();
+		this.dir  = Directory.getBuild();
 		
 		this.main    = raw.getMain();
 		this.libs    = raw.getLibs();
@@ -56,13 +64,11 @@ public class Project {
 		this.externs = raw.getExports();
 		this.sources = raw.getSources();
 		
+		this.roots   = new HashMap<Path, RootFile>();
 		this.scripts = new HashMap<Path, ScriptFile>();
 		this.styles  = new HashMap<Path, StandardFile>();
-	}
-	
-	public Project(String name) {
-		this.name = name;
-		this.dir  = Resources.getBuildDirectory();
+		
+		this.aliases = new HashMap<String, String>();
 	}
 	
 	public void build(FileFiltersRegistry filters) {
@@ -89,8 +95,8 @@ public class Project {
 	}
 	
 	public void deploy() throws IOException {
-		byte[] js = createJS();
-		byte[] css = createCSS();
+		String js = createJS();
+		String css = createCSS();
 		
 		for(Path dir : deploy) {
 			assert Files.exists(dir) : "Missing deploy entry: " + dir;
@@ -99,22 +105,22 @@ public class Project {
 			Path cnt = dir.resolve(name);
 			Files.createDirectories(cnt);
 			
-			if(scriptsDeploy) { Files.write(cnt.resolve("script.js"), js); }
-			if(stylesDeploy)  { Files.write(cnt.resolve("style.css"), css); }
+			if(scriptsDeploy) { writeFile(cnt.resolve("script.js"), js); }
+			if(scriptsDeploy) { writeFile(cnt.resolve("style.css"), css); }
 			
 			if(!Files.exists(dir.resolve(name + ".html"))) {
-				Files.write(dir.resolve(name + ".html"), createHTML());
+				writeFile(dir.resolve(name + ".html"), createHTML(false));
 			}
 		}
 		scriptsDeploy = false;
 		stylesDeploy  = false;
 	}
 	
-	private byte[] createJS() throws IOException {
+	private String createJS() throws IOException {
 		StringBuilder builder = new StringBuilder();
 		
 		if(scriptsDeploy) {
-			builder.append(Resources.getTemplate("require_fn"));
+			Resource.get("require_fn").appendTo(builder);
 			
 			for(Path library : libs) {
 				assert Files.exists(library) : "Missing library file: " + library;
@@ -125,13 +131,19 @@ public class Project {
 				file.deploy(builder);
 			}
 			
-			String mainName = getScriptFile(main).getName();
-			builder.append("run('/").append(mainName).append("');");
+			for(RootFile file : roots.values()) {
+				file.deploy(builder);
+			}
+			
+			builder
+				.append("require('/")
+				.append(getScriptFile(main).getName())
+				.append("');");
 		}
-		return builder.toString().getBytes();
+		return builder.toString();
 	}
 	
-	private byte[] createCSS() {
+	private String createCSS() {
 		StringBuilder builder = new StringBuilder();
 
 		if(stylesDeploy) {
@@ -139,35 +151,37 @@ public class Project {
 				file.deploy(builder);
 			}
 		}
-		return builder.toString().getBytes();
+		return builder.toString();
 	}
-	
-	private byte[] createHTML() {
-		String cnt = Resources.getTemplate("web_page");
-		return cnt.replaceAll("\\$\\{name\\}", name).getBytes();
+
+	private String createHTML(Boolean minify) {
+		return Resource.get("web_page")
+			.replace("name", name)
+			.replace("min", minify ? "-min" : "")
+			.toString();
 	}
 	
 	public void compile(ExternsVisitor visitor) throws IOException {
 		Path defaultDir = getDefaultDeployDir().resolve(name);
 		assert Files.exists(defaultDir) : "Project must be built before compilation: " + name;
 		
-		byte[] js  = createMinifiedJS(defaultDir, visitor);
-		byte[] css = createMinifiedCSS(defaultDir);
+		String js  = createMinifiedJS(defaultDir, visitor);
+		String css = createMinifiedCSS(defaultDir);
 
 		for(Path dir : deploy) {
 			Path cnt = dir.resolve(name);
 			assert Files.exists(cnt) : "Project is not built: " + name;
 
-			Files.write(cnt.resolve("script-min.js"), js);
-			Files.write(cnt.resolve("style-min.css"), css);
+			writeFile(cnt.resolve("script-min.js"), js);
+			writeFile(cnt.resolve("style-min.css"), css);
 			
 			if(!Files.exists(dir.resolve(name + "-min.html"))) {
-				Files.write(dir.resolve(name + "-min.html"), createMinifiedHTML());
+				writeFile(dir.resolve(name + "-min.html"), createHTML(true));
 			}
 		}
 	}
 	
-	private byte[] createMinifiedJS(Path dir, ExternsVisitor visitor) {
+	private String createMinifiedJS(Path dir, ExternsVisitor visitor) {
 		CompilerOptions options = new CompilerOptions();
 	    CompilationLevel.ADVANCED_OPTIMIZATIONS.setOptionsForCompilationLevel(options);
 	    
@@ -181,10 +195,10 @@ public class Project {
 	    
 	    Compiler compiler = new Compiler();
 	    compiler.compile(visitor.getExterns(), input, options);
-	    return compiler.toSource().getBytes();
+	    return compiler.toSource();
 	}
 	
-	private byte[] createMinifiedCSS(Path dir) {
+	private String createMinifiedCSS(Path dir) {
 		try {
 			Reader in = Files.newBufferedReader(dir.resolve("style.css"), Charset.defaultCharset());
 			StringWriter out = new StringWriter();
@@ -193,14 +207,17 @@ public class Project {
 			compressor.compress(out, 0);
 			in.close();
 			
-			return out.toString().getBytes();
+			return out.toString();
 		}
 		catch(IOException e) { throw new RuntimeException(e); } 
 	}
 	
-	private byte[] createMinifiedHTML() {
-		String cnt = Resources.getTemplate("web_page_min");
-		return cnt.replaceAll("\\$\\{name\\}", name).getBytes();
+	public RootFile getRootFile(Path path) {
+		if(!roots.containsKey(path)) {
+			roots.put(path, new RootFile(this, toProjectPath(path)));
+		}
+		scriptsDeploy = true;
+		return roots.get(path);
 	}
 	
 	public ScriptFile getScriptFile(Path path) {
@@ -245,6 +262,54 @@ public class Project {
 		throw new IllegalArgumentException("Project path translation for: " + path + " not found.");
 	}
 	
+	/**
+	 * Returns specified file as a String. 
+	 * Handles file's tagging - scans the content for @{set:<alias>} and marks found files.
+	 * 
+	 * @param path
+	 * @throws IOException
+	 */
+	public String readFile(Path path) {
+		try {
+			String file = new String(Files.readAllBytes(path));
+			
+			Pattern p = Pattern.compile("@\\{set:(\\w+)\\}");
+			Matcher m = p.matcher(file);
+			
+			while(m.find()) { 
+				String name = "/" + Extension.trim(toProjectPath(path));
+				aliases.put(m.group(1), name);
+			}
+			return file;
+		} catch(IOException e) { throw new RuntimeException(e); }
+	}
+	
+	/**
+	 * Saves the specified file from a String.
+	 * Handles file's tagging - replaces all found @{get:<alias>} with proper files paths.
+	 * 
+	 * @param path
+	 * @param file
+	 * @throws IOException
+	 */
+	public void writeFile(Path path, String file) {
+		Pattern p = Pattern.compile("@\\{get:(\\w+)\\}");
+		Matcher m = p.matcher(file);
+		
+		while(m.find()) {
+			String alias = m.group(1);
+			
+			assert aliases.containsKey(alias) : "File alias not found: " + alias;
+			file = m.replaceFirst(aliases.get(alias));
+			m.reset(file);
+		}
+		try { Files.write(path, file.getBytes()); }
+		catch(IOException e) { throw new RuntimeException(e); }
+	}
+	
+	/**
+	 * Returns project name.
+	 */
 	public String getName() {
 		return name;
 	}

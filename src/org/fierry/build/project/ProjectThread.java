@@ -63,7 +63,7 @@ public class ProjectThread extends Thread {
 					if(deploy) {
 						project.deploy();
 					}
-					System.out.println("kind: " + kind + ", file: " + ((File)event.context()).getName());
+//					System.out.println("kind: " + kind + ", file: " + ((File)event.context()).getName());
 				}
 				key.reset();
 			}

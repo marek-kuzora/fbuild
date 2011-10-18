@@ -41,14 +41,12 @@ public class SourceVisitor implements FileVisitor<Path> {
 		WatchKey key = new WatchableFile(dir.toFile()).register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
 		paths.put(key, dir);
 		files.put(dir, Files.getLastModifiedTime(dir));
-
 		filters.get(dir, project).fileCreated(dir, project);
 		return CONTINUE;
 	}
 
 	@Override public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 		files.put(file, Files.getLastModifiedTime(file));
-		
 		filters.get(file, project).fileCreated(file, project);
 		return CONTINUE;
 	}

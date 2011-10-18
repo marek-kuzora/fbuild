@@ -2,23 +2,22 @@ package org.fierry.build.files;
 
 import java.nio.file.Path;
 
-import org.fierry.build.utils.Resources;
+import org.fierry.build.utils.Extension;
+import org.fierry.build.utils.Resource;
 
 public class ScriptFile extends StandardFile {
 
 	private String name;
 	
 	public ScriptFile(Path path) {
-		String name = path.toString();
-		Integer idx = name.lastIndexOf('.');
-		
-		this.name = idx < 0 ? name : name.substring(0, name.lastIndexOf('.'));
+		this.name = Extension.trim(path);
 	}
 	
 	public void deploy(StringBuilder builder) {
-		builder.append(Resources.getTemplate("module")
-				.replaceAll("\\$\\{name\\}", name)
-				.replaceAll("\\$\\{content\\}", content));
+		Resource.get("script_module")
+				.replace("name", name)
+				.replaceLine("content", content)
+				.appendTo(builder);
 	}
 
 	public String getName() {
