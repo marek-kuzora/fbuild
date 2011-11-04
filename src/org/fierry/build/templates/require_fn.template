@@ -1,5 +1,5 @@
 var require = (function() {
-	
+
 	// Cache to store executed modules public API.
 	var cache = {};
 	
@@ -37,6 +37,8 @@ var require = (function() {
 		if(modules[name] == null) {
 			throw new Error('Module not found: ' + name);
 		}
+		
+		cache[name] = -1;
 		
 		// Executes module & caches its public API.
 		var base = name.substr(0, name.lastIndexOf('/'));

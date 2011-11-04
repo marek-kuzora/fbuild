@@ -1,0 +1,14 @@
+modules["${name}"] = function(require) {
+  var roots  = require('/fierry/view/roots');
+  var action = require('/fierry/view/action');
+  ${requires}
+  
+  
+  var n0 = function() { return []; };
+  var n = function() {
+    arr = []
+    ${nodes}
+    return arr;
+  }
+  return ${return};
+}

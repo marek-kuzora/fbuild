@@ -1,35 +1,33 @@
 package org.fierry.build.utils;
 
-import java.io.File;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Scanner;
 
 import org.fierry.build.app.Build;
 
 public class Directory {
-	private static final String TEMPLATE_EXT = ".template";
-	private static final String TEMPLATE_DIR = "/org/fierry/build/templates" + File.separator;
 	
 	public static Path getBuild() {
-		return getBuild(false);
+		Path dir = getInternalBuild();
+		
+		assert dir != null : "Build file not found: " + getRun();
+		return dir;
 	}
 	
-	public static Path getBuild(Boolean quiet) {
+	public static boolean existsBuild() {
+		return getInternalBuild() != null;
+	}
+	
+	private static Path getInternalBuild() {
 		Path dir = getRun();
 		while(dir != null) {
-			Path file = dir.resolve(Build.FILE);
-			
-			if(Files.exists(file)) { return dir; }
+			if(Files.exists(dir.resolve(Build.FILE))) { return dir; }
 			else { dir = dir.getParent(); }
 		}
-		
-		if(quiet) { return getRun(); }
-		else { throw new IllegalStateException("Build file not found: " + getRun()); }
+		return null;
 	}
 	
 	public static Path getRun() {
@@ -42,11 +40,5 @@ public class Directory {
 			return Paths.get(uri).resolve("../").normalize(); 
 		}
 		catch(URISyntaxException e) { throw new RuntimeException(e); }
-	}
-	
-	// TODO remove
-	public static String getTempla2te(String resource) {
-		InputStream in = Directory.class.getResourceAsStream(TEMPLATE_DIR + resource + TEMPLATE_EXT);
-		return new Scanner(in).useDelimiter("\\A").next();
 	}
 }

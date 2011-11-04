@@ -8,11 +8,7 @@ public class Source {
 
 	private Path project;
 	private Path absolute;
-	
-	public Source(String path, Path dir) {
-		this(path, path, dir);
-	}
-	
+
 	public Source(String name, String path, Path dir) {
 		assert name.indexOf('/') == -1 && name.indexOf('\\') == -1 && name.indexOf('.') == -1 :
 			"Source name cannot contain any '\\', '/' or '.' characters.";
@@ -39,6 +35,10 @@ public class Source {
 	
 	public Path getAbsolutePath() {
 		return absolute;
+	}
+	
+	@Override public int hashCode() {
+		return project.hashCode();
 	}
 	
 	@Override public String toString() {

@@ -10,7 +10,25 @@ public class FileFiltersRegistry {
 
 	private Collection<IFileFilter> filters;
 	
-	public FileFiltersRegistry() {
+	/*
+	 * Zależnie od typu projektu różne filtry będą ładowane (!)
+	 */
+	public static FileFiltersRegistry load() {
+		FileFiltersRegistry filters = new FileFiltersRegistry();
+		
+		filters.register(new CssFileFilter());
+		filters.register(new DirectoryFileFilter());
+		filters.register(new CoffeeScriptFileFilter());
+		filters.register(new ConfigFileFilter());
+		filters.register(new RootsFileFilter());
+		
+		filters.register(new IgnoreFileFilter());
+		filters.register(new UnsupportedFileFilter());
+		
+		return filters;
+	}
+	
+	private FileFiltersRegistry() {
 		this.filters = new ArrayList<IFileFilter>();
 	}
 	

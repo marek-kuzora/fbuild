@@ -1,5 +1,5 @@
 var require = (function() {
-	
+
 	// Cache to store executed modules public API.
 	var cache = {};
 	
@@ -38,6 +38,8 @@ var require = (function() {
 			throw new Error('Module not found: ' + name);
 		}
 		
+		cache[name] = -1;
+		
 		// Executes module & caches its public API.
 		var base = name.substr(0, name.lastIndexOf('/'));
 		return cache[name] = modules[name](function(path) {
@@ -50,182 +52,147 @@ var require = (function() {
 })();
 
 var modules = {};
-modules["source/math"] = function(require) {
-  exports.add = function(a, b) {
-    return a + b;
-  };
+modules["fierry/app"] = function(require) {
+
 }
-modules["example/app"] = function(require) {
+modules["fierry-example/app"] = function(require) {
   var math;
   
-  math = require('/source/math');
+  math = require('fierry/math');
   
   console.log('Working example project 12');
   
   console.log(math.add(Math.random(), 10));
 }
-modules["source/main_area:example"] = function(require) {
-  var node    = require('/source/view/action');
-  var execute = require('/source/view/registry').execute;
+modules["fierry/math"] = function(require) {
+  var math;
+  
+  return math = {
+    add: function(a, b) {
+      return a + b;
+    }
+  };
+}
+modules["fierry/main_area:example"] = function(require) {
+  var roots  = require('/fierry/view/roots');
+  var action = require('/fierry/view/action');
   var math = require('/source/Math');
   var app = require('/example/App');
+  var _require_2 = require('/fierry/dom/p');
+  var _require_1 = require('/fierry/dom/div');
+  var _require_0 = require('/fierry/dom/body');
   
+  
+  var n0 = function() { return []; };
   var n = function() {
     arr = []
-    arr.push(new action("div", 'aa', (function() {}), (function() {
+    arr.push(new action("div", 'aa', this, _require_1, (function() {}), (function() {
       var arr;
       arr = [];
-      arr.push(new action("p", 'aa', (function() {
+      arr.push(new action("p", 'aa', this, _require_2, (function() {
         return 'Hello World!';
       }), (function() {
         arr = [];
         return arr;
-      }), this));
+      })));
       return arr;
-    }), this));
+    })));
     return arr;
   }
-  return execute('body', n);
+  return roots.execute('body', _require_0, n);
 }
-modules["source/main_area:main_area"] = function(require) {
-  var node    = require('/source/view/action');
-  var execute = require('/source/view/registry').execute;
+modules["fierry/main_area:main_area"] = function(require) {
+  var roots  = require('/fierry/view/roots');
+  var action = require('/fierry/view/action');
   var math = require('/source/Math');
   var app = require('/example/App');
+  var _require_2 = require('/fierry/dom/p');
+  var _require_1 = require('/fierry/dom/div');
+  var _require_0 = require('/pfc-fierry/dom/body');
   
+  
+  var n0 = function() { return []; };
   var n = function() {
     arr = []
-    var __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
-    
-    arr.push(new action("div", 'aa', (function() {}), (function() {
+    arr.push(new action("div", 'aa', this, _require_1, (function() {}), (function() {
       var arr;
       arr = [];
-      arr.push(new action("header", 'aa', (function() {}), (function() {
+      arr.push(new action("div", 'aa', this, _require_1, (function() {}), (function() {
+        var fleet, _ref;
         arr = [];
-        arr.push(new action("p", 'aa', (function() {
+        arr.push(new action("p", 'aa', this, _require_2, (function() {
           return 'Hello world';
         }), (function() {
           arr = [];
           return arr;
-        }), this));
-        arr.push(new action("p", 'ab', (function() {
+        })));
+        arr.push(new action("p", 'ab', this, _require_2, (function() {
           return 'Here is some additional info';
         }), (function() {
           arr = [];
           return arr;
-        }), this));
-        arr.push(new action("date", 'ac', (function() {
+        })));
+        arr.push(new action("p", 'ac', this, _require_2, (function() {
           return '29.08.2011';
         }), (function() {
           arr = [];
           return arr;
-        }), this));
-        arr.push(new action("script", 'ad', (function() {
-          var hash;
-          return hash = {
-            fafa: 'gaga',
-            haha: 'papa'
-          };
-        }), (function() {
-          arr = [];
-          return arr;
-        }), this));
-        arr.push(new action("if", 'ae', (function() {
-          return user.happy != null;
-        }), (function() {
-          arr = [];
-          arr.push(new action("p", 'aa', (function() {
-            "Hello world";
-            "that: I'm anything";        return "- I have to come see u!";
+        })));
+        if (user.happy != null) {
+          arr.push(new action("p", 'ad', this, _require_2, (function() {
+            return "Hello world" + "that: I'm anything" + "- I have to come see u!";
           }), (function() {
             arr = [];
             return arr;
-          }), this));
-          return arr;
-        }), this));
-        arr.push(new action("for", 'af', (function() {
-          return __indexOf.call(user.fleets, fleet) >= 0;
-        }), (function() {
-          arr = [];
-          arr.push(new action("p", 'aa', (function() {
+          })));
+        }
+        for (fleet = 0, _ref = user.fleets.length; 0 <= _ref ? fleet <= _ref : fleet >= _ref; 0 <= _ref ? fleet++ : fleet--) {
+          arr.push(new action("p", 'ae' + math.uid(fleet) + 'aa', this, _require_2, (function() {
             return fleet.name;
           }), (function() {
             arr = [];
             return arr;
-          }), this));
-          arr.push(new action("p", 'ab', (function() {
+          })));
+          arr.push(new action("p", 'ae' + math.uid(fleet) + 'ab', this, _require_2, (function() {
             return fleet.get_description();
           }), (function() {
             arr = [];
             return arr;
-          }), this));
-          arr.push(new action("", 'ac', (function() {
-            return 'dada';
-          }), (function() {
-            arr = [];
-            return arr;
-          }), this));
-          arr.push(new action("", 'ad', (function() {
-            return 'fafa';
-          }), (function() {
-            arr = [];
-            return arr;
-          }), this));
-          arr.push(new action("", 'ae', (function() {
-            return 'gaga';
-          }), (function() {
-            arr = [];
-            return arr;
-          }), this));
-          return arr;
-        }), this));
+          })));
+        }
         return arr;
-      }), this));
+      })));
       return arr;
-    }), this));
+    })));
     
-    arr.push(new action("footer", 'ab', (function() {}), (function() {
+    arr.push(new action("div", 'ab', this, _require_1, (function() {}), (function() {
       var arr;
       arr = [];
-      arr.push(new action("args", 'aa', (function() {}), (function() {
-        arr = [];
-        arr.push(new action("logged", 'aa', (function() {
-          return as(user.logged);
-        }), (function() {
-          arr = [];
-          return arr;
-        }), this));
-        return arr;
-      }), this));
-      arr.push(new action("p", 'ab', (function() {
+      arr.push(new action("p", 'aa', this, _require_2, (function() {
         if (logged > 0) return 'Logged';
         return 'Unlogged';
       }), (function() {
         arr = [];
         return arr;
-      }), this));
-      arr.push(new action("p", 'ac', (function() {
+      })));
+      arr.push(new action("p", 'ab', this, _require_2, (function() {
         return user.name;
       }), (function() {
         arr = [];
         return arr;
-      }), this));
-      arr.push(new action("if", 'ad', (function() {
-        return user.logging_of;
-      }), (function() {
-        arr = [];
-        arr.push(new action("p", 'aa', (function() {
+      })));
+      if (user.logging_of) {
+        arr.push(new action("p", 'ac', this, _require_2, (function() {
           return 'goodbye';
         }), (function() {
           arr = [];
           return arr;
-        }), this));
-        return arr;
-      }), this));
+        })));
+      }
       return arr;
-    }), this));
+    })));
     return arr;
   }
-  return function() { return registry.create('pfc-body', n); };
+  return function() { return roots.execute_raw('pfc-body', _require_0, n); };
 }
-require('/example/app');
+require('/fierry-example/app');

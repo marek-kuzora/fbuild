@@ -3,7 +3,11 @@ package org.fierry.build.filters;
 import java.nio.file.Path;
 
 import org.fierry.build.app.Project;
+import org.fierry.build.resources.Script;
 
+/**
+ * TODO remove if unused
+ */
 public class JavaScriptFileFilter extends ExtensionFileFilter implements IFileFilter {
 	public static final String FILE_EXT = ".js";
 
@@ -16,12 +20,12 @@ public class JavaScriptFileFilter extends ExtensionFileFilter implements IFileFi
 	}
 
 	@Override public Boolean fileUpdated(Path path, Project project) {
-		project.getScriptFile(path).setContent(project.readFile(path));
+		project.getResource(path, Script.class).setContent(project.read(path));
 		return true;
 	}
 
 	@Override public Boolean fileDeleted(Path path, Project project) {
-		project.getScriptFile(path).removeContent();
+		project.getResource(path, Script.class).removeContent();
 		return true;
 	}
 }

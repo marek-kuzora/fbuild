@@ -1,0 +1,2 @@
+for ${variable} in [0..(${value}).length]
+  ${nodes}

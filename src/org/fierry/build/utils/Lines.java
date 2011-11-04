@@ -6,14 +6,14 @@ public class Lines {
 
 	public static final String separator = System.getProperty("line.separator");
 	
-	public static String indent(String s, int length) {
-		String indent = "\n";
+	public static String indent_2(String s, int length) {
+		String indent = separator;
 		for(int i = 0; i < length; i++) { indent += " "; }
 		
-		return s.replace("\n", indent);
+		return s.replace(separator, indent);
 	}
 	
-	public static String indent2(String s, int length) {
+	public static String indent(String s, int length) {
 		String indent = "";
 		for(int i = 0; i < length; i++) { indent += " "; }
 		

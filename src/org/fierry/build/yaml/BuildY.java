@@ -19,4 +19,9 @@ public class BuildY {
 		}
 		return projects;
 	}
+	
+	public Project getProject(String name) {
+		assert projects.containsKey(name) : "Project not found: " + name;
+		return new Project(name, projects.get(name));
+	}
 }

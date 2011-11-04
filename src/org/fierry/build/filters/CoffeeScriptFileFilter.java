@@ -3,6 +3,7 @@ package org.fierry.build.filters;
 import java.nio.file.Path;
 
 import org.fierry.build.app.Project;
+import org.fierry.build.resources.Script;
 import org.fierry.build.utils.Shell;
 
 public class CoffeeScriptFileFilter extends ExtensionFileFilter implements IFileFilter {
@@ -20,16 +21,16 @@ public class CoffeeScriptFileFilter extends ExtensionFileFilter implements IFile
 
 	@Override
 	public Boolean fileUpdated(Path path, Project project) {
-		String   file = project.readFile(path);
+		String   file = project.read(path);
 		String[] args = { "coffee", "-s", "-c", "-b" };
 
-		project.getScriptFile(path).setContent(Shell.run(args, file));
+		project.getResource(path, Script.class).setContent(Shell.run(args, file));
 		return true;
 	}
 
 	@Override
 	public Boolean fileDeleted(Path path, Project project) {
-		project.getScriptFile(path).removeContent();
+		project.getResource(path, Script.class).removeContent();
 		return true;
 	}
 }

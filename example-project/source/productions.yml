@@ -1,0 +1,46 @@
+behaviors:
+  dom/body:
+    location: /fierry/dom/body
+    conflict: false
+  
+  dom/pfc-body:
+    location: /pfc-fierry/dom/body
+    conflict: false
+    
+  dom/div:
+    location: /fierry/dom/div
+    conflict: false
+    
+  dom/p:
+    location: /fierry/dom/p
+    conflict: false
+
+
+actions:
+
+  dom/body:
+    root: true
+    behavior: dom/body
+    groups:
+      - dom/root
+      
+  dom/pfc-body:
+    root: true
+    behavior: dom/pfc-body
+    groups:
+      - dom/root
+      
+  dom/div:
+    behavior: dom/div
+    groups:
+      - dom/element
+    from:
+      - dom/root
+      - dom/element
+  
+  dom/p:
+    behavior: dom/p
+    groups:
+      - dom/element
+    from:
+      - dom/element
