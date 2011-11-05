@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.fierry.build.linking.GlobalConfig;
+import org.fierry.build.project.Lang;
 import org.fierry.build.resources.Roots;
 import org.fierry.build.utils.CoffeeScript;
 import org.fierry.build.utils.Template;
@@ -45,11 +46,11 @@ public abstract class AbstractDeployableRoot extends AbstractActionNode implemen
 		return requires.require(path);
 	}
 	
-	@Override public void deploy(StringBuilder builder) {
+	@Override public void deploy(StringBuilder builder, Lang lang) {
 		Template.get("nodes/root")
 				.replace("name", getDeployName())
 				.replace("return", getDeployReturn())
-				.replaceLine("nodes", getDeployNodes())
+				.replaceLine("nodes", getDeployNodes(lang))
 				.replaceLine("requires", requires.deploy())
 				.appendTo(builder);
 	}
@@ -60,7 +61,9 @@ public abstract class AbstractDeployableRoot extends AbstractActionNode implemen
 	
 	protected abstract String getDeployReturn();
 
-	@Override protected String getDeployNodes() {
-		return CoffeeScript.get().compile(super.getDeployNodes());
+	@Override protected String getDeployNodes(Lang lang) {
+		String nodes = super.getDeployNodes(lang);
+		if(Lang.JavaScript == lang) { System.out.println(nodes); }
+		return lang == Lang.JavaScript ? nodes : CoffeeScript.get().compile(nodes);
 	}
 }

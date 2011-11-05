@@ -73,9 +73,8 @@ public class Project {
 	}
 	
 	public void deploy() throws IOException {
-		System.out.println("Deploying... " + name);
 		linker.link();
-		linker.deploy(lang);
+		linker.deploy();
 	}
 	
 	public void compile(ExternsVisitor visitor) throws IOException {
@@ -171,10 +170,6 @@ public class Project {
 	
 	public String getName() {
 		return name;
-	}
-	
-	public Lang getLanguage() {
-		return lang;
 	}
 	
 	public Set<Source> getSources() {

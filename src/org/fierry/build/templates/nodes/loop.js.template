@@ -1,0 +1,3 @@
+for(var i = 0, l = (${value}).length; i < l; i++) {
+  ${nodes}
+}

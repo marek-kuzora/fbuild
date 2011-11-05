@@ -6,7 +6,7 @@ import org.fierry.build.utils.Lines;
 
 public class Css extends Resource {
 
-	protected String content;
+	protected String content = "";
 	
 	public Css(Path path) {
 		super(path);

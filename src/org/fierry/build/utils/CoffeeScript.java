@@ -54,6 +54,7 @@ public class CoffeeScript {
 				builder.append((char) c);
 			}
 			
+			// Handing unexpected compilation errors.
 			if(c == -1) {
 				start();
 				return "";

@@ -1,0 +1,7 @@
+arr.push(new action("${type}", ${uid}, this, ${behavior}, function() {
+  ${value}
+}, function() {
+  var arr = []
+  ${nodes}
+  return arr;
+}));

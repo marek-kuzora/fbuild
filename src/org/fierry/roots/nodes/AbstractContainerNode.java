@@ -2,6 +2,7 @@ package org.fierry.roots.nodes;
 
 import java.util.Map;
 
+import org.fierry.build.project.Lang;
 import org.fierry.build.yaml.ActionY;
 import org.fierry.roots.api.IContainer;
 import org.fierry.roots.api.IDeployable;
@@ -33,11 +34,11 @@ public abstract class AbstractContainerNode extends AbstractNode implements ICon
 		return new ActionNode(token, args);
 	}
 	
-	protected String getDeployNodes() {
+	protected String getDeployNodes(Lang lang) {
 		StringBuilder builder = new StringBuilder();
 		for(INode node : nodes) {
 			if(node instanceof IDeployable) {
-				((IDeployable) node).deploy(builder);
+				((IDeployable) node).deploy(builder, lang);
 			}
 		}
 		return builder.toString();

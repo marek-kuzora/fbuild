@@ -38,8 +38,8 @@ public class FLinker {
 		this.configuration = new GlobalConfig(project.getResources(Config.class));
 	}
 	
-	public void deploy(Lang lang) throws IOException {
-		String js  = createJS(lang);
+	public void deploy() throws IOException {
+		String js  = createJS();
 		String css = createCSS();
 		
 		for(Path dir : deploys) {
@@ -63,7 +63,7 @@ public class FLinker {
 	 * Problem gdy dołączę DAO - wtedy potrzebujemy wydrukować require na początku pliku, 
 	 * 	a podczas wspólnej kompilacji nie mam jednego pliku a wszystkie razem :/
 	 */
-	private String createJS(Lang lang) throws IOException {
+	private String createJS() throws IOException {
 		StringBuilder builder = new StringBuilder();
 		
 		Template.get("modules/require").appendTo(builder);

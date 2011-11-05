@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.fierry.build.linking.GlobalConfig;
+import org.fierry.build.project.Lang;
 import org.fierry.build.utils.Lines;
 import org.fierry.build.utils.Template;
 import org.fierry.roots.api.IContainer;
@@ -42,13 +43,13 @@ public class ActionNode extends AbstractActionNode implements IMultiline, IDeplo
 		super.consult(parent, root, config);
 	}
 
-	@Override public void deploy(StringBuilder builder) {
-		Template.get("nodes/action")
+	@Override public void deploy(StringBuilder builder, Lang lang) {
+		Template.get("nodes/action", lang)
 				.replace("uid", uid)
 				.replace("type", type)
 				.replace("behavior", behavior)
 				.replaceLine("value", getDeployValue())
-				.replaceLine("nodes", getDeployNodes())
+				.replaceLine("nodes", getDeployNodes(lang))
 				.appendTo(builder);
 	}
 	

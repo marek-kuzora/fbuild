@@ -52,7 +52,7 @@ public class Roots extends Resource {
 		for(IRoot root : roots) {
 			if(root instanceof IDeployableRoot) {
 				root.consult(null, null, conf);
-				((IDeployableRoot) root).deploy(builder);
+				((IDeployableRoot) root).deploy(builder, lang);
 			}
 		}
 	}

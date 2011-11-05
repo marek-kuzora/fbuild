@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.fierry.build.linking.GlobalConfig;
+import org.fierry.build.project.Lang;
 import org.fierry.build.utils.Template;
 import org.fierry.roots.api.IContainer;
 import org.fierry.roots.api.IDeployable;
@@ -41,11 +42,11 @@ public class LoopNode extends AbstractContainerNode implements IDeployable {
 		return uid + " + math.uid(" + variable + ") + " + "'" + generator.generate(2) + "'";
 	}
 
-	@Override public void deploy(StringBuilder builder) {
-		Template.get("nodes/loop")
+	@Override public void deploy(StringBuilder builder, Lang lang) {
+		Template.get("nodes/loop", lang)
 				.replace("value", value)
 				.replace("variable", variable)
-				.replaceLine("nodes", getDeployNodes())
+				.replaceLine("nodes", getDeployNodes(lang))
 				.appendTo(builder);
 	}
 
