@@ -8,11 +8,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.fierry.build.filters.FileFiltersRegistry;
 import org.fierry.build.project.FBuilder;
 import org.fierry.build.project.FCompiler;
 import org.fierry.build.project.FFiles;
 import org.fierry.build.project.FLinker;
+import org.fierry.build.project.Lang;
 import org.fierry.build.project.Source;
 import org.fierry.build.resources.Config;
 import org.fierry.build.resources.Css;
@@ -29,6 +29,7 @@ import org.fierry.build.yaml.Yaml;
 public class Project {
 
 	private Path dir;
+	private Lang lang;
 	private String name;
 	
 	private FFiles files;
@@ -52,6 +53,7 @@ public class Project {
 		this.name = name;
 		this.dir  = Directory.getBuild();
 		
+		this.lang    = raw.getLanguage();
 		this.sources = raw.getSources(name);
 		
 		this.files    = new FFiles(this);
@@ -66,13 +68,14 @@ public class Project {
 	 * BUILD / DEPLOY / COMPILE
 	 */
 	
-	public void build(FileFiltersRegistry filters) {
-		builder.build(filters);
+	public void build() {
+		builder.build(lang);
 	}
 	
 	public void deploy() throws IOException {
+		System.out.println("Deploying... " + name);
 		linker.link();
-		linker.deploy();
+		linker.deploy(lang);
 	}
 	
 	public void compile(ExternsVisitor visitor) throws IOException {
@@ -113,7 +116,7 @@ public class Project {
 		Path relative = toProjectPath(path);
 		
 		if(cls == Css.class)    { return new Css(relative); }
-		if(cls == Roots.class)  { return new Roots(relative); }
+		if(cls == Roots.class)  { return new Roots(relative, lang); }
 		if(cls == Script.class) { return new Script(relative); }
 		if(cls == Config.class) { return new Config(relative); }
 		
@@ -168,6 +171,10 @@ public class Project {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public Lang getLanguage() {
+		return lang;
 	}
 	
 	public Set<Source> getSources() {

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.fierry.build.app.Project;
+import org.fierry.build.project.Lang;
 import org.fierry.build.project.Source;
 import org.fierry.build.utils.Directory;
 
@@ -17,13 +18,20 @@ public class ProjectY {
 	
 	public String main;
 	public String source;
+	
+	public String lang = "coffeescript";
+	
 	public List<String> deploy  = new ArrayList<String>();
 	public List<String> libs    = new ArrayList<String>();
 	public List<String> exports = new ArrayList<String>();
 	public List<Object> dependences = new ArrayList<Object>();
 	
 	public ProjectY() {
-		this.dir  = Directory.getBuild();
+		this.dir = Directory.getBuild();
+	}
+	
+	public Lang getLanguage() {
+		return Lang.get(lang);
 	}
 	
 	public Path getMain() {

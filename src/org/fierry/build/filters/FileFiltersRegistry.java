@@ -5,22 +5,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.fierry.build.app.Project;
+import org.fierry.build.project.Lang;
 
 public class FileFiltersRegistry {
 
 	private Collection<IFileFilter> filters;
 	
-	/*
-	 * Zależnie od typu projektu różne filtry będą ładowane (!)
-	 */
-	public static FileFiltersRegistry load() {
+	public static FileFiltersRegistry load(Lang lang) {
 		FileFiltersRegistry filters = new FileFiltersRegistry();
 		
-		filters.register(new CssFileFilter());
 		filters.register(new DirectoryFileFilter());
-		filters.register(new CoffeeScriptFileFilter());
 		filters.register(new ConfigFileFilter());
 		filters.register(new RootsFileFilter());
+		filters.register(new CssFileFilter());
+		
+		switch (lang) {
+			case JavaScript:   filters.register(new JavaScriptFileFilter());   break;
+			case CoffeeScript: filters.register(new CoffeeScriptFileFilter()); break;
+		}
 		
 		filters.register(new IgnoreFileFilter());
 		filters.register(new UnsupportedFileFilter());

@@ -3,7 +3,6 @@ package org.fierry.build.app;
 import java.io.IOException;
 import java.util.Date;
 
-import org.fierry.build.filters.FileFiltersRegistry;
 import org.fierry.build.utils.Commands;
 
 public class Runner {
@@ -31,7 +30,7 @@ public class Runner {
 		Build file = Build.load();
 		
 		file.filter(args.getProjects());
-		file.build(FileFiltersRegistry.load());
+		file.build();
 		file.deploy();
 	}
 	

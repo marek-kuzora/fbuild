@@ -1,10 +1,10 @@
-modules["fierry/app"] = function(require) {
+modules['fierry/app'] = function(require) {
 
 }
-modules["fierry-performance/app"] = function(require) {
+modules['fierry-performance/app'] = function(require) {
   console.log('Working performance project 12');
 }
-modules["fierry/math"] = function(require) {
+modules['fierry/math'] = function(require) {
   var math;
   
   return math = {

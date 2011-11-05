@@ -7,18 +7,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.fierry.build.linking.GlobalConfig;
+import org.fierry.build.project.Lang;
 import org.fierry.roots.api.IDeployableRoot;
 import org.fierry.roots.api.IRoot;
 
 public class Roots extends Resource {
-	
+
+	private Lang lang;
+	private Collection<IRoot> roots;
 	private Map<String, String> requires;
 	
-	private Collection<IRoot> roots;
-	
-	public Roots(Path path) {
+	public Roots(Path path, Lang lang) {
 		super(path);
 		
+		this.lang     = lang;
 		this.roots    = new ArrayList<IRoot>();
 		this.requires = new HashMap<String, String>();
 	}

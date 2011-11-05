@@ -12,7 +12,7 @@ public class Script extends Css {
 	
 	public void deploy(StringBuilder builder) {
 
-		Template.get("script_module")
+		Template.get("modules/script")
 				.replace("name", name)
 				.replaceLine("content", content)
 				.appendTo(builder);

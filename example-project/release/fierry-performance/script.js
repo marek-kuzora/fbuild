@@ -8428,13 +8428,13 @@ window.jQuery = window.$ = jQuery;
 })(window);
 
 
-modules["fierry/app"] = function(require) {
+modules['fierry/app'] = function(require) {
 
 }
-modules["fierry-performance/app"] = function(require) {
+modules['fierry-performance/app'] = function(require) {
   console.log('Working performance project 12');
 }
-modules["fierry/math"] = function(require) {
+modules['fierry/math'] = function(require) {
   var math;
   
   return math = {
@@ -8443,14 +8443,10 @@ modules["fierry/math"] = function(require) {
     }
   };
 }
-modules["fierry/main_area:example"] = function(require) {
+modules['fierry/main_area:example'] = function(require) {
   var roots  = require('/fierry/view/roots');
   var action = require('/fierry/view/action');
-  var math = require('/source/Math');
-  var app = require('/example/App');
-  var _require_2 = require('/fierry/dom/p');
-  var _require_1 = require('/fierry/dom/div');
-  var _require_0 = require('/fierry/dom/body');
+  var math = require('/source/Math');var app = require('/example/App');var _require_2 = require('/fierry/dom/p');var _require_1 = require('/fierry/dom/div');var _require_0 = require('/fierry/dom/body');
   
   
   var n0 = function() { return []; };
@@ -8471,14 +8467,10 @@ modules["fierry/main_area:example"] = function(require) {
   }
   return roots.execute('body', _require_0, n);
 }
-modules["fierry/main_area:main_area"] = function(require) {
+modules['fierry/main_area:main_area'] = function(require) {
   var roots  = require('/fierry/view/roots');
   var action = require('/fierry/view/action');
-  var math = require('/source/Math');
-  var app = require('/example/App');
-  var _require_2 = require('/fierry/dom/p');
-  var _require_1 = require('/fierry/dom/div');
-  var _require_0 = require('/pfc-fierry/dom/body');
+  var math = require('/source/Math');var app = require('/example/App');var _require_2 = require('/fierry/dom/p');var _require_1 = require('/fierry/dom/div');var _require_0 = require('/pfc-fierry/dom/body');
   
   
   var n0 = function() { return []; };

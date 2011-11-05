@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
-import org.fierry.build.filters.FileFiltersRegistry;
 import org.fierry.build.utils.Directory;
 import org.fierry.build.visitors.ExternsVisitor;
 import org.fierry.build.yaml.BuildY;
@@ -45,9 +44,9 @@ public class Build {
 	 * OPERATIONS
 	 */
 	
-	public void build(FileFiltersRegistry filters) {
+	public void build() {
 		for(Project project : projects) {
-			project.build(filters);
+			project.build();
 		}
 	}
 	

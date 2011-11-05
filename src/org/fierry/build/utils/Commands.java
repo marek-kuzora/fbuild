@@ -27,7 +27,7 @@ public class Commands {
 		Path main = cnt.resolve("app.coffee");
 		if(!Files.exists(main)) { Files.createFile(main); }
 		
-		Template.get("new_project")
+		Template.get("commands/new_project")
 				.replace("name", name)
 				.replace("source", source)
 				.appendTo(dir.resolve(Build.FILE));

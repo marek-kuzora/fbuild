@@ -12,6 +12,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.fierry.build.project.Lang;
+
 public class Template {
 	private static final String EXT = ".template";
 	private static final String DIR = "/org/fierry/build/templates" + File.separator;
@@ -23,8 +25,8 @@ public class Template {
 		return new Template(readResource(resource));
 	}
 	
-	public static Template get(String resource, String lang) {
-		return new Template(readResource(resource + "." + lang));
+	public static Template get(String resource, Lang lang) {
+		return new Template(readResource(resource + lang.extension));
 	}
 	
 	private static String readResource(String resource) {

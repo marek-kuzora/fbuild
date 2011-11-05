@@ -28,7 +28,8 @@ public class FBuilder {
 		this.sources = raw.getSources(project.getName());
 	}
 	
-	public void build(FileFiltersRegistry filters) {
+	public void build(Lang lang) {
+		FileFiltersRegistry filters = FileFiltersRegistry.load(lang);
 		try {
 			for(Source source : sources) {
 				assert source.exists() : "Missing source entry: " + source;

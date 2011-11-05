@@ -1,7 +1,7 @@
-modules["fierry/app"] = function(require) {
+modules['fierry/app'] = function(require) {
 
 }
-modules["fierry/math"] = function(require) {
+modules['fierry/math'] = function(require) {
   var math;
   
   return math = {

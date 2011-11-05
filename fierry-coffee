@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+
+var path = require('path');
+var fs   = require('fs');
+var cs   = require('coffee-script/command');
+
+// Defining code separator
+var separator = String.fromCharCode(0, 0, 0, 0, 0);
+
+var code  = '';
+var stdin = process.openStdin();
+
+// Handling incoming data
+stdin.on('data', function(buffer) {
+  if(buffer) {
+    code += buffer.toString();
+    idx   = code.indexOf(separator);
+
+    if(idx !== -1) {
+      process.argv[2] = "-epb"
+      process.argv[3] = code.substr(0, idx);
+      cs.run()
+      
+      code = code.substr(idx + separator.length);
+      process.stdout.write(separator);
+    }
+  }
+});

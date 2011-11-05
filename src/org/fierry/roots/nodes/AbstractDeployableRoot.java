@@ -5,7 +5,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.fierry.build.linking.GlobalConfig;
 import org.fierry.build.resources.Roots;
-import org.fierry.build.utils.Shell;
+import org.fierry.build.utils.CoffeeScript;
 import org.fierry.build.utils.Template;
 import org.fierry.roots.api.IDeployableRoot;
 import org.fierry.roots.api.INode;
@@ -61,8 +61,6 @@ public abstract class AbstractDeployableRoot extends AbstractActionNode implemen
 	protected abstract String getDeployReturn();
 
 	@Override protected String getDeployNodes() {
-		String nodes = super.getDeployNodes();
-		String[] args = { "coffee", "-s", "-c", "-b" };
-		return Shell.run(args, nodes);
+		return CoffeeScript.get().compile(super.getDeployNodes());
 	}
 }
