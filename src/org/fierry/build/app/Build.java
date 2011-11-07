@@ -26,7 +26,7 @@ public class Build {
 	
 	public static Build load(Path dir) {
 		Path file = dir.resolve(FILE);
-		return new Build(Yaml.load(BuildY.class, file));
+		return new Build(Yaml.load(BuildY.class, file), dir);
 	}
 	
 	public static void createEmpty() throws IOException {
@@ -36,8 +36,8 @@ public class Build {
 		Files.write(file, "projects:".getBytes());
 	}
 	
-	private Build(BuildY raw) {
-		projects = raw.getProjects();
+	private Build(BuildY raw, Path dir) {
+		projects = raw.getProjects(dir);
 	}
 	
 	/*

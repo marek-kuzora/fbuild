@@ -38,11 +38,11 @@ public class Source {
 	}
 	
 	@Override public int hashCode() {
-		return project.hashCode();
+		return absolute.hashCode();
 	}
 	
 	@Override public String toString() {
-		return project.toString();
+		return project.toString() + ": " + absolute;
 	}
 	
 }

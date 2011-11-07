@@ -18,6 +18,7 @@ public class CoffeeScript {
 	private Process process;
 	
 	private InputStream in;
+	private InputStream err;
 	private OutputStream out;
 	
 	private CoffeeScript() {
@@ -30,6 +31,7 @@ public class CoffeeScript {
 			process = runtime.exec(new String[] { getScriptPath() });
 			
 			in  = process.getInputStream();
+			err = process.getErrorStream();
 			out = process.getOutputStream();
 		}
 		catch(IOException e) { throw new RuntimeException(e); }
@@ -56,6 +58,9 @@ public class CoffeeScript {
 			
 			// Handing unexpected compilation errors.
 			if(c == -1) {
+				while ((c = err.read()) != -1) {
+					System.out.print((char) c);
+				}
 				start();
 				return "";
 			}

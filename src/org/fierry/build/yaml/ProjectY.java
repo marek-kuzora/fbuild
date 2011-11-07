@@ -10,7 +10,6 @@ import java.util.Set;
 import org.fierry.build.app.Project;
 import org.fierry.build.project.Lang;
 import org.fierry.build.project.Source;
-import org.fierry.build.utils.Directory;
 
 public class ProjectY {
 	
@@ -26,8 +25,8 @@ public class ProjectY {
 	public List<String> exports = new ArrayList<String>();
 	public List<Object> dependences = new ArrayList<Object>();
 	
-	public ProjectY() {
-		this.dir = Directory.getBuild();
+	public void setDirectory(Path dir) {
+		this.dir = dir;
 	}
 	
 	public Lang getLanguage() {
@@ -89,5 +88,9 @@ public class ProjectY {
 		}
 		
 		throw new IllegalArgumentException("Dependency isn't a String nor a List");
+	}
+	
+	@Override public String toString() {
+		return String.format("dir %s, source: %s, main: %s, dependeces, %s", dir, source, main, dependences);
 	}
 }

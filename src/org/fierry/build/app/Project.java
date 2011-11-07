@@ -19,7 +19,6 @@ import org.fierry.build.resources.Css;
 import org.fierry.build.resources.Resource;
 import org.fierry.build.resources.Roots;
 import org.fierry.build.resources.Script;
-import org.fierry.build.utils.Directory;
 import org.fierry.build.visitors.ExternsVisitor;
 import org.fierry.build.yaml.BuildY;
 import org.fierry.build.yaml.ProjectY;
@@ -46,12 +45,14 @@ public class Project {
 	
 	public static Project load(String name, Path dir) {
 		Path file = dir.resolve(Build.FILE);
-		return Yaml.load(BuildY.class, file).getProject(name);
+		return Yaml.load(BuildY.class, file).getProject(name, dir);
 	}
 
-	public Project(String name, ProjectY raw) {
+	public Project(String name, ProjectY raw, Path dir) {
+		this.dir  = dir;
 		this.name = name;
-		this.dir  = Directory.getBuild();
+		
+		raw.setDirectory(dir);
 		
 		this.lang    = raw.getLanguage();
 		this.sources = raw.getSources(name);
