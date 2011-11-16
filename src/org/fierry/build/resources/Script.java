@@ -4,7 +4,7 @@ import java.nio.file.Path;
 
 import org.fierry.build.utils.Template;
 
-public class Script extends Css {
+public class Script extends Resource {
 
 	public Script(Path path) {
 		super(path);
