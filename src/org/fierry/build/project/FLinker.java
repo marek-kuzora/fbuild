@@ -58,15 +58,8 @@ public class FLinker {
 		}
 	}
 	
-	/*
-	 * Idea jest, aby dopiero na sam koniec wykonywać translację z CS do JS i tylko wtedy, jeśli jest tak ustalone w projekcie.
-	 * Problem gdy dołączę DAO - wtedy potrzebujemy wydrukować require na początku pliku, 
-	 * 	a podczas wspólnej kompilacji nie mam jednego pliku a wszystkie razem :/
-	 */
 	private String createJS() throws IOException {
 		StringBuilder builder = new StringBuilder();
-		
-		Template.get("modules/require").appendTo(builder);
 		
 		for(Path library : libs) {
 			assert Files.exists(library) : "Missing library file: " + library;
@@ -75,7 +68,7 @@ public class FLinker {
 		}
 		
 		for(Script file : project.getResources(Script.class)) {
-			file.deploy(builder);
+			file.deploy(builder, configuration);
 		}
 		
 		for(Roots file : project.getResources(Roots.class)) {
@@ -83,7 +76,7 @@ public class FLinker {
 		}
 		
 		builder
-			.append("require('/")
+			.append("F.run('")
 			.append(project.getResource(main, Script.class).getName())
 			.append("');");
 		

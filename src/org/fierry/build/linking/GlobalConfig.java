@@ -9,6 +9,7 @@ import java.util.Map;
 import org.fierry.build.resources.Config;
 import org.fierry.build.yaml.ActionY;
 import org.fierry.build.yaml.BehaviorY;
+import org.fierry.build.yaml.FileY;
 
 /**
  * Issues:
@@ -16,16 +17,23 @@ import org.fierry.build.yaml.BehaviorY;
  */
 public class GlobalConfig {
 
+	private Map<String, FileY> files;
 	private Map<String, BehaviorY> behaviors;
 	private Map<String, List<ActionY>> actions;
 	
 	public GlobalConfig(Collection<Config> files) {
+		this.files     = new HashMap<String, FileY>();
 		this.behaviors = new HashMap<String, BehaviorY>();
 		this.actions   = new HashMap<String, List<ActionY>>();
 		
 		for(Config config : files) {
 			config.build(this);
 		}
+	}
+	
+	public void setFileData(String name, FileY file) {
+		assert files.get(name) == null : "File already exists for name: " + name;
+		files.put(name, file);
 	}
 	
 	public void setBehavior(String name, BehaviorY behavior) {
@@ -66,5 +74,10 @@ public class GlobalConfig {
 	
 	public BehaviorY getBehavior(String name) {
 		return behaviors.get(name);
+	}
+	
+	public FileY getFileData(String name) {
+		if(!files.containsKey(name)) { files.put(name, new FileY()); }
+		return files.get(name);
 	}
 }

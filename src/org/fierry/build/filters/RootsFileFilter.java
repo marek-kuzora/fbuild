@@ -23,9 +23,16 @@ public class RootsFileFilter extends ExtensionFileFilter implements IFileFilter 
 	}
 
 	@Override public Boolean fileUpdated(Path path, Project project) {
-		Collection<Token> tokens = Tokenizer.getTokens(path, project.read(path));
-		Collection<IRoot> roots   = AbstractSyntaxTree.getRoots(path, tokens);
-		project.getResource(path, Roots.class).setContent(roots);
+		try {
+			Collection<Token> tokens = Tokenizer.getTokens(path, project.read(path));
+			Collection<IRoot> roots   = AbstractSyntaxTree.getRoots(path, tokens);
+			project.getResource(path, Roots.class).setContent(roots);
+		} catch(RuntimeException e) {
+			e.printStackTrace();
+			
+			Collection<IRoot> roots = Collections.emptyList();
+			project.getResource(path, Roots.class).setContent(roots);
+		}
 		return true;
 	}
 	

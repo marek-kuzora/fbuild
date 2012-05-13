@@ -11,7 +11,7 @@ public class ExportRoot extends AbstractDeployableRoot {
 	}
 
 	@Override protected String getDeployReturn() {
-		return "function() { return roots.execute_raw('" + rootType + "', " + behavior + ", n); }";
+		return "function() { return roots().execute_raw('" + rootType + "', " + behavior + "(), n); }";
 	}
 
 }

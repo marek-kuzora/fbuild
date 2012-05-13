@@ -1,4 +1,4 @@
-arr.push(new action("${type}", ${uid}, @, ${behavior}, (->
+arr.push(new Action("${type}", ${uid}, @, ${behavior}(), (->
   ${value}
 ), (->
   arr = []

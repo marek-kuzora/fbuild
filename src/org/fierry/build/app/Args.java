@@ -17,11 +17,19 @@ public class Args {
 	}
 	
 	public Boolean isContinous() {
-		return isBuild();
+		return isBuildWatch();
 	}
 	
 	public Boolean isBuild() {
+		 return isBuildOnce() || isBuildWatch();
+	}
+	
+	private Boolean isBuildWatch() {
 		return command.equals("-b") || command.equals("-build");
+	}
+	
+	private Boolean isBuildOnce() {
+		return command.equals("-bo") || command.equals("-build-once");
 	}
 	
 	public Boolean isCompile() {

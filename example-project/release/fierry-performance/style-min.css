@@ -1,4 +1,0 @@
-modules["fierry-performance/app"] = function(require){console.log('Working performance project 12')}
-modules["fierry/math"] = function(require){var math;return math ={add:function(a,b){return a+b}
-}
-}

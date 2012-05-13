@@ -5,24 +5,3 @@
 .ahaha {
   color: blue;
 }
-modules['fierry/app'] = function(require) {
-
-}
-modules['fierry-example/app'] = function(require) {
-  var math;
-  
-  math = require('fierry/math');
-  
-  console.log('Working example project 12');
-  
-  console.log(math.add(Math.random(), 10));
-}
-modules['fierry/math'] = function(require) {
-  var math;
-  
-  return math = {
-    add: function(a, b) {
-      return a + b;
-    }
-  };
-}

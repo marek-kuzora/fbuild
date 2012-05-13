@@ -1,6 +1,7 @@
 package org.fierry.build.utils;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Extension {
 
@@ -15,5 +16,9 @@ public class Extension {
 		Integer idx = name.lastIndexOf('.');
 		
 		return idx < 0 ? name : name.substring(0, name.lastIndexOf('.'));
+	}
+	
+	public static String trim(String path) {
+		return trim(Paths.get(path));
 	}
 }

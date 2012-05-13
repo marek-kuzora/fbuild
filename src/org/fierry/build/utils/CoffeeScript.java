@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Date;
 
 public class CoffeeScript {
 	private static final String separator = String.valueOf(new char[] {0, 0, 0, 0, 0});
@@ -43,8 +42,6 @@ public class CoffeeScript {
 	
 	synchronized public String compile(String code) {
 		try {
-			Date date = new Date();
-			System.out.print("Start... ");
 			out.write(code.getBytes());
 			out.write(separator.getBytes());
 			out.flush();
@@ -64,7 +61,6 @@ public class CoffeeScript {
 				start();
 				return "";
 			}
-			System.out.println(new Date().getTime() - date.getTime() + " ms");
 			return builder.substring(0, getStreamLength(builder));
 		}
 		catch(IOException e) { throw new RuntimeException(e); }

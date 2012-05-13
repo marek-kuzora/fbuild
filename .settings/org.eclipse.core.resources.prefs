@@ -1,4 +1,4 @@
-#Mon Nov 07 10:41:55 CET 2011
+#Sat May 12 16:45:17 CEST 2012
 eclipse.preferences.version=1
 encoding//example-project/source/main_area.v=UTF-8
 encoding//src/org/fierry/build/app/Build.java=UTF-8
@@ -6,10 +6,10 @@ encoding//src/org/fierry/build/app/Project.java=UTF-8
 encoding//src/org/fierry/build/app/Runner.java=UTF-8
 encoding//src/org/fierry/build/filters/FileFiltersRegistry.java=UTF-8
 encoding//src/org/fierry/build/filters/RootsFileFilter.java=UTF-8
+encoding//src/org/fierry/build/parsers/PerformanceParser.java=UTF-8
 encoding//src/org/fierry/build/project/FLinker.java=UTF-8
 encoding//src/org/fierry/build/resources/Roots.java=UTF-8
 encoding//src/org/fierry/build/resources/Script.java=UTF-8
-encoding//src/org/fierry/build/templates/modules/require.template=UTF-8
 encoding//src/org/fierry/build/utils/CoffeeScript.java=UTF-8
 encoding//src/org/fierry/build/utils/Template.java=UTF-8
 encoding//src/org/fierry/build/visitors/ExternsVisitor.java=UTF-8

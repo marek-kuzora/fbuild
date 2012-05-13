@@ -2,6 +2,7 @@ package org.fierry.roots.nodes;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,8 @@ public class ActionNode extends AbstractActionNode implements IMultiline, IDeplo
 	private String behavior;
 	private Collection<String> data;
 	
+	private ActionNode tagsNode;
+	
 	public ActionNode(Action token, Map<String, String> args) {
 		super(token, args);
 		data = new ArrayList<String>();
@@ -39,8 +42,18 @@ public class ActionNode extends AbstractActionNode implements IMultiline, IDeplo
 		uid        = container.getUid();
 		production = container.getProduction(type);
 		behavior   = root.require(production.getBehavior());
-	
+		
 		super.consult(parent, root, config);
+		
+		if(isDomAction()) {
+			tagsNode = new ActionNode(createTagToken(), new HashMap<String, String>());
+			tagsNode.consult(this, root, config);
+		}
+	}
+	
+	private Action createTagToken() {
+		String data = "'" + StringUtils.join(tags, " ").replaceAll("(^| )-", " ").trim() + "'";
+		return new Action("tag", new ArrayList<String>(), data);
 	}
 
 	@Override public void deploy(StringBuilder builder, Lang lang) {
@@ -51,6 +64,23 @@ public class ActionNode extends AbstractActionNode implements IMultiline, IDeplo
 				.replaceLine("value", getDeployValue())
 				.replaceLine("nodes", getDeployNodes(lang))
 				.appendTo(builder);
+	}
+	
+	@Override protected String getDeployNodes(Lang lang) {
+		return getDeployTags(lang) + super.getDeployNodes(lang);
+	}
+	
+	private String getDeployTags(Lang lang) {
+		if(isDomAction()) {
+			StringBuilder builder = new StringBuilder();
+			tagsNode.deploy(builder, lang);
+			return builder.toString();
+		}
+		return "";
+	}
+	
+	private Boolean isDomAction() {
+		return production.groups.contains("dom/element") && tags.size() > 0;
 	}
 	
 	private String getDeployValue() {

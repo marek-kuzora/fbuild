@@ -15,4 +15,9 @@ public class Yaml {
 		catch(IOException e) { throw new RuntimeException(e); }
 	}
 	
+	public static<T> T load(Class<T> cls, String cnt) {
+		org.yaml.snakeyaml.Yaml yaml = new org.yaml.snakeyaml.Yaml(new Constructor(cls));
+		return cls.cast(yaml.load(new String(cnt)));
+	}
+	
 }

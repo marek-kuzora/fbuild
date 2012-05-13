@@ -87,9 +87,9 @@ public class FCompiler {
 	}
 	
 	private String createHTML() {
-		return Template.get("web_page")
-			.replace("name", project.getName())
-			.replace("min", "-min")
-			.toString();
+		return Template.get("commands/new_web")
+		.replace("name", name)
+		.replace("min", "-min")
+		.toString();
 	}
 }

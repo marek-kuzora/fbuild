@@ -1,3 +1,4 @@
-modules['${name}'] = function(require) {
+F.register_module('${name}', function() {
+  ${requires}
   ${content}
-}
+});

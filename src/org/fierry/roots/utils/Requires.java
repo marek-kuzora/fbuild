@@ -37,10 +37,18 @@ public class Requires {
 			// Do not require other root modules.
 			if(e.getValue().contains(":")) { continue; }
 			
-			Template.get("nodes/require")
+			Boolean upperCase = Character.isUpperCase(e.getKey().charAt(0));
+			String[] value = e.getValue().split("\\.");
+
+			
+			Template.get("modules/script_require")
 					.replace("name", e.getKey())
-					.replace("path", e.getValue())
+					.replace("path", value[0])
+					.replace("tail", value.length == 2 && value[1] != "" ? "." + value[1] : "")
+					.replace("require", upperCase ? "F.srequire" : "F.require")
 					.appendTo(builder);
+			
+			
 		}
 		return builder.toString();
 	}

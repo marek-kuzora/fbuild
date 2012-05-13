@@ -63,7 +63,6 @@ public class FThread extends Thread {
 					if(deploy) {
 						project.deploy();
 					}
-//					System.out.println("kind: " + kind + ", file: " + ((File)event.context()).getName());
 				}
 				key.reset();
 			}

@@ -3,6 +3,7 @@ package org.fierry.build.app;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.fierry.build.resources.Css;
 import org.fierry.build.resources.Resource;
 import org.fierry.build.resources.Roots;
 import org.fierry.build.resources.Script;
+import org.fierry.build.utils.Extension;
 import org.fierry.build.visitors.ExternsVisitor;
 import org.fierry.build.yaml.BuildY;
 import org.fierry.build.yaml.ProjectY;
@@ -74,8 +76,10 @@ public class Project {
 	}
 	
 	public void deploy() throws IOException {
+		Date date = new Date();
 		linker.link();
 		linker.deploy();
+		System.out.printf("Deploying %-20s...%4d ms\n", name, new Date().getTime() - date.getTime());
 	}
 	
 	public void compile(ExternsVisitor visitor) throws IOException {
@@ -151,6 +155,12 @@ public class Project {
 			}
 		}
 		throw new IllegalArgumentException("Project path translation for: " + path + " not found.");
+	}
+	
+	public String toResourceName(Path path) {
+		assert path.isAbsolute(): "Path needs to be an absolute path: " + path;
+		
+		return Extension.trim(toProjectPath(path));
 	}
 	
 	/*

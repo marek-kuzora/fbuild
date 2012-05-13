@@ -49,11 +49,15 @@ public class Roots extends Resource {
 	}
 	
 	public void deploy(StringBuilder builder, GlobalConfig conf) {
-		for(IRoot root : roots) {
-			if(root instanceof IDeployableRoot) {
-				root.consult(null, null, conf);
-				((IDeployableRoot) root).deploy(builder, lang);
+		try {
+			for(IRoot root : roots) {
+				if(root instanceof IDeployableRoot) {
+					root.consult(null, null, conf);
+					((IDeployableRoot) root).deploy(builder, lang);
+				}
 			}
+		} catch(RuntimeException e) {
+			e.printStackTrace();
 		}
 	}
 }

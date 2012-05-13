@@ -47,7 +47,7 @@ public abstract class AbstractDeployableRoot extends AbstractActionNode implemen
 	}
 	
 	@Override public void deploy(StringBuilder builder, Lang lang) {
-		Template.get("nodes/root")
+		Template.get("nodes/root_2")
 				.replace("name", getDeployName())
 				.replace("return", getDeployReturn())
 				.replaceLine("nodes", getDeployNodes(lang))

@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/local/bin/node
 
 var path = require('path');
 var fs   = require('fs');
@@ -20,7 +20,7 @@ stdin.on('data', function(buffer) {
       process.argv[2] = "-epb"
       process.argv[3] = code.substr(0, idx);
       cs.run()
-      
+            
       code = code.substr(idx + separator.length);
       process.stdout.write(separator);
     }

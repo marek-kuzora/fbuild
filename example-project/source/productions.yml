@@ -14,6 +14,10 @@ behaviors:
   dom/p:
     location: /fierry/dom/p
     conflict: false
+    
+  dom/tag:
+    location: /fierry/dom/tag
+    conflict: false
 
 
 actions:
@@ -44,3 +48,7 @@ actions:
       - dom/element
     from:
       - dom/element
+      
+  dom/tag:
+    behavior: dom/tag
+    from: [dom/element]

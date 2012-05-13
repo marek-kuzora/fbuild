@@ -10,6 +10,7 @@ import java.util.Set;
 import org.fierry.build.app.Project;
 import org.fierry.build.project.Lang;
 import org.fierry.build.project.Source;
+import org.fierry.build.utils.Directory;
 
 public class ProjectY {
 	
@@ -39,6 +40,7 @@ public class ProjectY {
 	
 	public Collection<Path> getLibs() {
 		Collection<Path> libs = new ArrayList<Path>();
+		libs.add(Directory.getJar().resolve("fierry.js"));
 		
 		for(String str : this.libs) {
 			libs.add(dir.resolve(str).normalize());

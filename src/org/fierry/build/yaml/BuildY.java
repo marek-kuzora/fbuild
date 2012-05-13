@@ -15,8 +15,10 @@ public class BuildY {
 	public List<Project> getProjects(Path dir) {
 		List<Project> projects = new ArrayList<Project>();
 		
-		for(Entry<String, ProjectY> e : this.projects.entrySet()) {
-			projects.add(new Project(e.getKey(), e.getValue(), dir));
+		if(this.projects != null) {
+			for(Entry<String, ProjectY> e : this.projects.entrySet()) {
+				projects.add(new Project(e.getKey(), e.getValue(), dir));
+			}
 		}
 		return projects;
 	}

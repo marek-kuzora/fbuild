@@ -11,6 +11,6 @@ public class RunRoot extends AbstractDeployableRoot {
 	}
 
 	@Override protected String getDeployReturn() {
-		return "roots.execute('" + rootType + "', " + behavior + ", n)";
+		return "roots().execute('" + rootType + "', " + behavior + "(), n)";
 	}
 }

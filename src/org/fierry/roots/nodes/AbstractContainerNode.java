@@ -1,5 +1,6 @@
 package org.fierry.roots.nodes;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.fierry.build.project.Lang;
@@ -35,6 +36,10 @@ public abstract class AbstractContainerNode extends AbstractNode implements ICon
 	}
 	
 	protected String getDeployNodes(Lang lang) {
+		return getDeployNodes(nodes, lang);
+	}
+	
+	protected String getDeployNodes(Collection<INode> nodes, Lang lang) {
 		StringBuilder builder = new StringBuilder();
 		for(INode node : nodes) {
 			if(node instanceof IDeployable) {
@@ -43,4 +48,5 @@ public abstract class AbstractContainerNode extends AbstractNode implements ICon
 		}
 		return builder.toString();
 	}
+
 }

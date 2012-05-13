@@ -1,4 +1,4 @@
-arr.push(new action("${type}", ${uid}, this, ${behavior}, function() {
+arr.push(new Action("${type}", ${uid}, this, ${behavior}(), function() {
   ${value}
 }, function() {
   var arr = []
