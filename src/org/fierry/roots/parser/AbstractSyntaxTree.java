@@ -12,6 +12,7 @@ import java.util.Map;
 import org.fierry.roots.api.IMultiline;
 import org.fierry.roots.api.INode;
 import org.fierry.roots.api.IRoot;
+import org.fierry.roots.nodes.DeployableRoot;
 import org.fierry.roots.nodes.ExportRoot;
 import org.fierry.roots.nodes.RequireRoot;
 import org.fierry.roots.nodes.RunRoot;
@@ -82,9 +83,10 @@ public class AbstractSyntaxTree {
 		Map<String, String> args = new HashMap<String, String>();
 		
 		IRoot root = null;
-		if(type.equals("require")) { root = new RequireRoot(token, args); }
-		if(type.equals("export"))  { root = new ExportRoot(token, args);  }
-		if(type.equals("run"))     { root = new RunRoot(token, args);     }
+		if(type.equals("require")) { root = new RequireRoot(token, args);    }
+		if(type.equals("define"))  { root = new DeployableRoot(token, args); }
+		if(type.equals("export"))  { root = new ExportRoot(token, args);     }
+		if(type.equals("run"))     { root = new RunRoot(token, args);        }
 		
 		if(root != null) { roots.add(root); }
 		else { error("Root node not found for type: /1", type); }

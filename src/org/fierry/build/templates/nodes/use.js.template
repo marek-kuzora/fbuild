@@ -1,0 +1,5 @@
+var tmp = ${variable}().use(${world}, this);
+for(var i = 0, l = tmp.length; i < l; i++) {
+  tmp[i].uid = ${uid} + tmp[i].uid;
+  arr.push(tmp[i])
+}

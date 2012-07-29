@@ -1,4 +1,4 @@
-F.register_module('${name}', function() {
+F.register_module('${name}', function(__lazy__) {
   ${requires}
   ${content}
 });

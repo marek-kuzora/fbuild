@@ -10,9 +10,9 @@ import org.fierry.build.utils.Lines;
 
 
 public class PerformanceParser {
-	private static final String NAME = "([^'\"]+)";
+	private static final String NAME = "([^'\":]+)";
 	private static final String PERFORMANCE = "(?m)^performance (('|\")" + NAME + "('|\")),?";
-	private static final String SPROPERTY = " +(('|\")" + NAME + "('|\")): *";
+	private static final String SPROPERTY = " +(('|\")([^'\"]+)('|\")): *";
 	private static final String PROPERTY = " +" + NAME + ": *";
 
 	private Integer lineNo;
@@ -124,6 +124,7 @@ public class PerformanceParser {
 				Matcher m = p.matcher(line);
 				
 				if(m.find()) {
+//					System.out.println("GROUP: " + m.group(1));
 					if(m.group(1).equals("run")) {
 						run = parseFunction(line.substring	(m.end()), false);
 					}

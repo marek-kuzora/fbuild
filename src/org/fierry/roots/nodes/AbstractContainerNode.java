@@ -31,6 +31,7 @@ public abstract class AbstractContainerNode extends AbstractNode implements ICon
 		
 		if(type.equals("if")) { return new ConditionNode(token, args); }
 		if(type.equals("for")) { return new LoopNode(token, args); }
+		if(type.equals("use")) { return new TemplateNode(token, args); }
 		
 		return new ActionNode(token, args);
 	}

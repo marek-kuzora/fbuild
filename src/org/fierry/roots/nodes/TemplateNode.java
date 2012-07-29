@@ -11,40 +11,38 @@ import org.fierry.roots.api.IDeployable;
 import org.fierry.roots.api.IDeployableRoot;
 import org.fierry.roots.api.INode;
 import org.fierry.roots.parser.Token.Action;
-import org.fierry.roots.utils.Uid;
 
-public class LoopNode extends AbstractContainerNode implements IDeployable {
+public class TemplateNode extends AbstractContainerNode implements IDeployable {
 
 	private String uid;
-	private String value;
+	private String world;
 	private String variable;
 	
-	private Uid generator;
-
-	public LoopNode(Action token, Map<String, String> args) {
+	public TemplateNode(Action token, Map<String, String> args) {
 		super(token, args);
 		
-		String[] raw = StringUtils.normalizeSpace(token.getData()).split(" in ");
-		this.variable = raw[0];
-		this.value    = raw[1];
+		String  raw = StringUtils.normalizeSpace(token.getData());
+		Integer idx = raw.indexOf(':');
+		
+		variable = raw.substring(0, idx).trim();
+		world    = raw.substring(idx + 1).trim();
+	}
+	
+	@Override protected AbstractNode createNode(Action token, Map<String, String> args) {
+		throw new IllegalArgumentException("/require cannot contain any nodes.");
 	}
 	
 	@Override public void consult(INode parent, IDeployableRoot root, GlobalConfig config) {
 		assert parent instanceof IContainer;
 		
-		uid       = ((IContainer) parent).getUid();
-		generator = new Uid();
-		
+		uid = ((IContainer) parent).getUid();
 		super.consult(parent, root, config);
 	}
 	
-	@Override public String getUid() {
-		return uid + " + uid__ + string.from_int(i__, 2) + " + "'" + generator.generate(2) + "'";
-	}
-
 	@Override public void deploy(StringBuilder builder, Lang lang) {
-		Template.get("nodes/loop", lang)
-				.replace("value", value)
+		Template.get("nodes/use", lang)
+				.replace("uid", uid)
+				.replace("world", world)
 				.replace("variable", variable)
 				.replaceLine("nodes", getDeployNodes(lang))
 				.appendTo(builder);

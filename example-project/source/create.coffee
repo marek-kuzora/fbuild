@@ -1,22 +1,14 @@
-#
-# This file loads performance tests for creating primitives, arrays,
-# hashes, etc.
-#
+performance 'items'
 
-
-
-# Register main group.
-# Register main group.
-performance '/create'
-  before: ->
-    @user = world()
-
-
-
-# Load tests.
-F.run 'fierry-qa/performance/create/primitives'
-F.run 'fierry-qa/performance/create/array'
-#F.run 'fierry-qa/performance/create/hash'
-#F.run 'fierry-qa/performance/create/class'
-#F.run 'fierry-qa/performance/create/function'
-#F.run 'fierry-qa/performance/create/function_prototype' # ???
+  'references':
+    before: -> @a = []; @b = []; @c = []; @d = []; @e = []
+    run:    -> a: @a, b: @b, c: @c, d: @d, e: @e
+    
+    
+  ' 4 actions: 1x3':
+    before: ->
+      @v = F.srequire('fierry-qa/performance/view/create:1x3')
+      console.log @v(), @v()
+    run: ->
+      @v()
+    

@@ -19,12 +19,14 @@ public class GlobalConfig {
 
 	private Map<String, FileY> files;
 	private Map<String, BehaviorY> behaviors;
-	private Map<String, List<ActionY>> actions;
+	private Map<String, List<ActionY>> gactions;
+	private Map<String, ActionY> iactions;
 	
 	public GlobalConfig(Collection<Config> files) {
 		this.files     = new HashMap<String, FileY>();
 		this.behaviors = new HashMap<String, BehaviorY>();
-		this.actions   = new HashMap<String, List<ActionY>>();
+		this.gactions   = new HashMap<String, List<ActionY>>();
+		this.iactions   = new HashMap<String, ActionY>();
 		
 		for(Config config : files) {
 			config.build(this);
@@ -43,6 +45,10 @@ public class GlobalConfig {
 	
 	public void setActionProduction(String name, ActionY action) {
 		action.setup(this, name);
+		
+		assert !iactions.containsKey(name) : "Action production already exists, id: " + name;
+		iactions.put(name, action);
+		
 
 		for(String group : action.from) {
 			getGroup(group).add(action);
@@ -50,10 +56,10 @@ public class GlobalConfig {
 	}
 	
 	private Collection<ActionY> getGroup(String group) {
-		if(!actions.containsKey(group)) {
-			actions.put(group, new ArrayList<ActionY>());
+		if(!gactions.containsKey(group)) {
+			gactions.put(group, new ArrayList<ActionY>());
 		}
-		return actions.get(group);
+		return gactions.get(group);
 	}
 	
 	public ActionY getActionProduction(ActionY parent, String type) {
@@ -70,6 +76,11 @@ public class GlobalConfig {
 			if(data.accept(type)) { return data; }
 		}
 		throw new IllegalArgumentException("No production found for root: " + type);
+	}
+	
+	public ActionY getActionProductionById(String name) {
+		assert iactions.containsKey(name) : "Action production not found, id: " + name;
+		return iactions.get(name);
 	}
 	
 	public BehaviorY getBehavior(String name) {

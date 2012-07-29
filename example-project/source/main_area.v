@@ -2,25 +2,21 @@
 /require /example/App  as app
 /require /source/Math  as math
 
-/run example: body
+/define dom/div: body
   /div
     /p 'Hello World!'
 
-/export main_area: pfc-body
+/define dom/pfc-body: pfc-body
+
+  /use main_area: world
 
   # Comment. Should be stripped.
   /div -main-area -unique
-
+  
     /div
       /p -title 'Hello world'
       /p -desc  'Here is some additional info'
       /p        '29.08.2011'
-
-      # Special action here! And multiline expression :-O
-      #/script
-      #  hash =
-      #    fafa: 'gaga'
-      #    haha: 'papa'
 
       /if user.happy?
         /p

@@ -28,7 +28,7 @@ public class CoffeeScriptFileFilter extends ExtensionFileFilter implements IFile
 		Script script = project.getResource(path, Script.class);
 		Config config = project.getResource(path.resolve(".yml"), Config.class);
 		
-//		System.out.println("Compiling: " + path);
+		System.out.println("Compiling: " + path);
 		
 		// Parsing inline configuration directives.
 		if(InlineConfigurationParser.accept(code)) {

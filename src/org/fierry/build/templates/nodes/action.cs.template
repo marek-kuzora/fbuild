@@ -1,7 +1,6 @@
 arr.push(new Action("${type}", ${uid}, @, ${behavior}(), (->
   ${value}
-), (->
-  arr = []
+), ((arr) ->
   ${nodes}
   return arr
 )))

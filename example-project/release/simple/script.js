@@ -492,10 +492,10 @@ var F = (function() {
   F.get_global_cache = function(ns) {
 
     // Create cache if it doesn't exist.
-    if(!(ns in F.storage_cache_)) {
-      F.storage_cache_[ns] = {};
+    if(!(ns in F.global_cache_)) {
+      F.global_cache_[ns] = {};
     }
-    return F.storage_cache_[ns];
+    return F.global_cache_[ns];
   };
 
 
@@ -702,15 +702,11 @@ var F = (function() {
    * specified, returns integer from <0, max>. Otherwise it returns
    * float from <0,1> - behaving exactly as Math.random().
    *
-   * This method is implemented to be extremely fast - therefore the
-   * distribution of generated integers is broken. Maximum value is
-   * very unlikely to be generated.
-   *
    * @param max  {Number}  positive integer.
    * @return     {Number}
    */
   F.random = function(max) {
-    return max ? Math.random() * max << 0 : Math.random();
+    return max ? Math.round(Math.random() * max) : Math.random();
   };
 
 

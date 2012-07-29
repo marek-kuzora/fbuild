@@ -492,10 +492,10 @@ var F = (function() {
   F.get_global_cache = function(ns) {
 
     // Create cache if it doesn't exist.
-    if(!(ns in F.storage_cache_)) {
-      F.storage_cache_[ns] = {};
+    if(!(ns in F.global_cache_)) {
+      F.global_cache_[ns] = {};
     }
-    return F.storage_cache_[ns];
+    return F.global_cache_[ns];
   };
 
 
@@ -702,15 +702,11 @@ var F = (function() {
    * specified, returns integer from <0, max>. Otherwise it returns
    * float from <0,1> - behaving exactly as Math.random().
    *
-   * This method is implemented to be extremely fast - therefore the
-   * distribution of generated integers is broken. Maximum value is
-   * very unlikely to be generated.
-   *
    * @param max  {Number}  positive integer.
    * @return     {Number}
    */
   F.random = function(max) {
-    return max ? Math.random() * max << 0 : Math.random();
+    return max ? Math.round(Math.random() * max) : Math.random();
   };
 
 
@@ -809,8 +805,6 @@ F.register_module('fierry/class', function() {
   
   return Xxx = (function() {
   
-    Xxx.name = 'Xxx';
-  
     function Xxx() {}
   
     Xxx.prototype.hello = function() {
@@ -837,7 +831,6 @@ F.register_module('fierry/primitives', function() {
     'boolean': function(i) {
       while (i--) {
         true;
-  
       }
     },
     'integer': function(i) {
@@ -914,30 +907,54 @@ F.register_module('fierry/math', function() {
 });
 F.register_module('fierry/create', function() {
   
-  performance('/create', {
-    before: function() {
-      return this.user = world();
+  performance('items', {
+    'references': {
+      run: function(i) {
+        while (i--) {
+          ({
+            a: this.a,
+            b: this.b,
+            c: this.c,
+            d: this.d,
+            e: this.e
+          });
+        }
+      },
+      before: function() {
+        this.a = [];
+        this.b = [];
+        this.c = [];
+        this.d = [];
+        return this.e = [];
+      }
+    },
+    ' 4 actions: 1x3': {
+      run: function(i) {
+        while (i--) {
+          this.v();
+        }
+      },
+      before: function() {
+        this.v = F.srequire('fierry-qa/performance/view/create:1x3');
+        return console.log(this.v(), this.v());
+      }
     }
   });
-  
-  F.run('fierry-qa/performance/create/primitives');
-  
-  F.run('fierry-qa/performance/create/array');
 });
-F.register_module('fierry/main_area:example', function() {
+F.register_module('fierry/main_area', function() {
 
-  var roots  = F.require('/fierry/view/roots');
-  var Action = F.srequire('/fierry/view/action');
-  var math = F.require('/source/Math');var app = F.require('/example/App');var _require_2 = F.require('/fierry/dom/p');var _require_1 = F.require('/fierry/dom/div');var _require_0 = F.require('/fierry/dom/body');
+  var View = F.srequire('fierry/view/view');
+  var Action = F.srequire('fierry/view/action');
+  var math = F.require('/source/Math');var app = F.require('/example/App');var _require_1 = F.require('/fierry/dom/p');var _require_0 = F.require('/fierry/dom/div');
   
   
   var n0 = function() { return []; };
-  var n = function() {
-    arr = []
-    arr.push(new Action("div", 'aa', this, _require_1(), (function() {}), (function() {
+  var n = function(world) {
+    var arr = []
+    arr.push(new Action("div", 'aa', this, _require_0(), (function() {}), (function() {
       var arr;
       arr = [];
-      arr.push(new Action("p", 'aa', this, _require_2(), (function() {
+      arr.push(new Action("p", 'aa', this, _require_1(), (function() {
         return 'Hello World!';
       }), (function() {
         arr = [];
@@ -946,20 +963,29 @@ F.register_module('fierry/main_area:example', function() {
       return arr;
     })));
     return arr;
-  }
-  return roots().execute('body', _require_0(), n);
+  };
+  return new View('body', _require_0(), n);
 });
-F.register_module('fierry/main_area:main_area', function() {
+F.register_module('fierry/main_area', function() {
 
-  var roots  = F.require('/fierry/view/roots');
-  var Action = F.srequire('/fierry/view/action');
+  var View = F.srequire('fierry/view/view');
+  var Action = F.srequire('fierry/view/action');
   var math = F.require('/source/Math');var app = F.require('/example/App');var _require_2 = F.require('/fierry/dom/p');var _require_1 = F.require('/fierry/dom/div');var _require_3 = F.require('/fierry/dom/tag');var _require_0 = F.require('/pfc-fierry/dom/body');
   
   
   var n0 = function() { return []; };
-  var n = function() {
-    arr = []
-    arr.push(new Action("div", 'aa', this, _require_1(), (function() {}), (function() {
+  var n = function(world) {
+    var arr = []
+    var action, _i, _len, _ref;
+    
+    _ref = main_area().use(world, this);
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      action = _ref[_i];
+      action.uid = 'aa' + action.uid;
+      arr.push(action);
+    }
+    
+    arr.push(new Action("div", 'ab', this, _require_1(), (function() {}), (function() {
       var arr;
       arr = [];
       arr.push(new Action("tag", 'ab', this, _require_3(), (function() {
@@ -969,7 +995,7 @@ F.register_module('fierry/main_area:main_area', function() {
         return arr;
       })));
       arr.push(new Action("div", 'aa', this, _require_1(), (function() {}), (function() {
-        var fleet, _i, _ref;
+        var fleet, _j, _ref1;
         arr = [];
         arr.push(new Action("p", 'aa', this, _require_2(), (function() {
           return 'Hello world';
@@ -1009,7 +1035,7 @@ F.register_module('fierry/main_area:main_area', function() {
             return arr;
           })));
         }
-        for (fleet = _i = 0, _ref = user.fleets.length; 0 <= _ref ? _i <= _ref : _i >= _ref; fleet = 0 <= _ref ? ++_i : --_i) {
+        for (fleet = _j = 0, _ref1 = user.fleets.length; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; fleet = 0 <= _ref1 ? ++_j : --_j) {
           arr.push(new Action("p", 'ae' + math.uid(fleet) + 'aa', this, _require_2(), (function() {
             return fleet.name;
           }), (function() {
@@ -1040,11 +1066,13 @@ F.register_module('fierry/main_area:main_area', function() {
       return arr;
     })));
     
-    arr.push(new Action("div", 'ab', this, _require_1(), (function() {}), (function() {
+    arr.push(new Action("div", 'ac', this, _require_1(), (function() {}), (function() {
       var arr;
       arr = [];
       arr.push(new Action("p", 'aa', this, _require_2(), (function() {
-        if (logged > 0) return 'Logged';
+        if (logged > 0) {
+          return 'Logged';
+        }
         return 'Unlogged';
       }), (function() {
         arr = [];
@@ -1067,7 +1095,7 @@ F.register_module('fierry/main_area:main_area', function() {
       return arr;
     })));
     return arr;
-  }
-  return function() { return roots().execute_raw('pfc-body', _require_0(), n); };
+  };
+  return new View('pfc-body', _require_0(), n);
 });
 F.run('fierry-example/app');

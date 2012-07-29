@@ -1,2 +1,3 @@
-for ${variable} in [0..(${value}).length]
+uid__ = (${value}).uid();
+for ${variable}, i__ in (${value}).all()
   ${nodes}

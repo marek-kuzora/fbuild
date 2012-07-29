@@ -1,16 +1,15 @@
 F.register_module('${name}', function() {
-
+  var view;
   var string = F.srequire('fierry/util/string');
-  var roots  = F.require('fierry/view/roots');
+  var View = F.srequire('fierry/view/view');
   var Action = F.srequire('fierry/view/action');
   ${requires}
   
   
   var n0 = function() { return []; };
-  var n = function(world) {
-    var arr = []
+  var n = function(world, arr) {
     ${nodes}
     return arr;
   };
-  return ${return};
+  return (view = function() { return ${return}; })()
 });

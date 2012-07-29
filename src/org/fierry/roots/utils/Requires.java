@@ -33,23 +33,22 @@ public class Requires {
 		StringBuilder builder = new StringBuilder();
 		
 		for(Entry<String, String> e : requires.entrySet()) {
-
+			
 			// Do not require other root modules.
 			if(e.getValue().contains(":")) { continue; }
 			
 			Boolean upperCase = Character.isUpperCase(e.getKey().charAt(0));
+			Boolean isDot = e.getValue().contains(".");
 			String[] value = e.getValue().split("\\.");
-
 			
 			Template.get("modules/script_require")
 					.replace("name", e.getKey())
 					.replace("path", value[0])
 					.replace("tail", value.length == 2 && value[1] != "" ? "." + value[1] : "")
-					.replace("require", upperCase ? "F.srequire" : "F.require")
-					.appendTo(builder);
-			
-			
+					.replace("require", upperCase || isDot ? "F.srequire" : "F.require")
+					.appendTo(builder);			
 		}
+		
 		return builder.toString();
 	}
 }
